@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_button.dart';
+import 'package:speedlab_pelanggan/app/utils/widget/info_card.dart';
 
 import '../controllers/profile_controller.dart';
 
@@ -13,7 +14,7 @@ class ProfileView extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        // backgroundColor: Colors.black,
         elevation: 0,
         title: Text(
           "Halaman Profil ",
@@ -23,6 +24,7 @@ class ProfileView extends GetView<ProfileController> {
             fontSize: 18,
           ),
         ),
+        backgroundColor: ColorTheme.primary,
         centerTitle: true,
       ),
       body: Obx(() {
@@ -43,17 +45,15 @@ class ProfileView extends GetView<ProfileController> {
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
-                            ColorTheme.primary,
-                            ColorTheme.secondaryColor,
-                          ],
+                          colors: [Colors.white, Colors.white],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: ColorTheme.primary, width: 1),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
+                            color: Colors.black.withValues(alpha: 0.4),
                             blurRadius: 10,
                             offset: const Offset(0, 5),
                           ),
@@ -70,7 +70,7 @@ class ProfileView extends GetView<ProfileController> {
                                       ? NetworkImage(user.avatar!)
                                       : null,
                             ),
-                            Divider(color: Colors.white54, height: 30),
+                            Divider(color: Colors.black, height: 30),
                             SizedBox(height: 10),
                             _buildUserInfoRow(Icons.person, "Nama", user.name),
                             SizedBox(height: 10),
@@ -87,10 +87,18 @@ class ProfileView extends GetView<ProfileController> {
                               "Alamat",
                               user.address,
                             ),
-                            Divider(color: Colors.white54, height: 30),
+                            Divider(color: Colors.black, height: 30),
                             CustomButton(
                               text: "Logout",
-                              onPressed: controller.logout,
+                              onPressed: () {
+                                ConfirmationDialog.show(
+                                  title: "Konfirmasi Logout",
+                                  message: "Apakah Anda yakin ingin logout?",
+                                  onConfirm: () {
+                                    controller.logout();
+                                  },
+                                );
+                              },
                               backgroundColor: Colors.red,
                               foregroundColor: Colors.white,
                               icon: Icons.door_back_door,
@@ -132,7 +140,7 @@ Widget _buildUserInfoRow(IconData icon, String label, String? value) {
   return Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Icon(icon, color: Colors.white),
+      Icon(icon, color: Colors.black),
       SizedBox(width: 10),
       Expanded(
         child: Column(
@@ -141,15 +149,19 @@ Widget _buildUserInfoRow(IconData icon, String label, String? value) {
             Text(
               label,
               style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
               ),
             ),
             SizedBox(height: 2),
             Text(
               value ?? '-',
-              style: GoogleFonts.poppins(color: Colors.white, fontSize: 14),
+              style: GoogleFonts.poppins(
+                color: Colors.grey[800],
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -183,7 +195,7 @@ Widget _buildmenuItem({
               offset: const Offset(0, 2),
             ),
           ],
-          border: Border.all(color: ColorTheme.lightGrey, width: 1),
+          border: Border.all(color: ColorTheme.primary, width: 1),
         ),
         child: Row(
           children: [

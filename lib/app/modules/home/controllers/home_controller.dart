@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:speedlab_pelanggan/app/data/models/motor_model.dart';
+import 'package:speedlab_pelanggan/app/data/models/service_model.dart';
 import 'package:speedlab_pelanggan/app/data/providers/motorcycles_provider.dart';
+import 'package:speedlab_pelanggan/app/data/providers/service_provider.dart';
 import 'package:speedlab_pelanggan/app/data/services/auth_service.dart';
 import 'package:speedlab_pelanggan/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_snackbar.dart';
@@ -8,19 +10,22 @@ import 'package:flutter/material.dart';
 
 class HomeController extends GetxController {
   final MotorcyclesProvider motorProvider;
+  final ServiceProvider serviceProvider;
   final authService = Get.find<AuthService>();
   final dashC = Get.find<DashboardController>();
   var motors = <MotorModel>[].obs;
+  var service = <ServiceModel>[].obs;
   final isLoading = false.obs;
 
-  HomeController({required this.motorProvider});
+  HomeController({required this.motorProvider, required this.serviceProvider});
 
   @override
   void onInit() {
     super.onInit();
     // Delay lebih lama untuk memastikan GetConnect sudah fully initialized
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(seconds: 1), () {
       fetchMyMotors();
+      fetchServiceList();
     });
   }
 
@@ -71,6 +76,25 @@ class HomeController extends GetxController {
       debugPrint('❌ Exception in fetchMyMotors: $e');
       debugPrint('Stack trace: $stackTrace');
       CustomSnackbar.error("Error", 'Terjadi kesalahan: ${e.toString()}');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchServiceList() async {
+    try {
+      isLoading.value = true;
+      final response = await serviceProvider.fetchServices();
+      if (response.isOk && response.body != null) {
+        final serviceResponse = ServiceResponse.fromJson(response.body);
+        service.value = serviceResponse.data;
+        debugPrint("Sukses load data");
+      } else {
+        CustomSnackbar.error(
+          "Error",
+          response.body?['message'] ?? 'Gagal mengambil data layanan',
+        );
+      }
     } finally {
       isLoading.value = false;
     }

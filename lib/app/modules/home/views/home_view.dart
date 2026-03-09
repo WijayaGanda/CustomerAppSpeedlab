@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:speedlab_pelanggan/app/modules/home/views/service_catalog_widget.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
 // import 'package:speedlab_pelanggan/app/utils/widget/custom_header.dart';
 // import 'package:speedlab_pelanggan/app/utils/widget/custom_button.dart';
@@ -42,7 +43,7 @@ class HomeView extends GetView<HomeController> {
             padding: const EdgeInsets.all(10.0),
             child: GestureDetector(
               onTap: () {
-                controller.dashC.changePage(1); // Ganti ke halaman Profil
+                controller.dashC.changePage(3); // Ganti ke halaman Profil
               },
               child: CircleAvatar(
                 radius: 20,
@@ -141,7 +142,9 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        controller.dashC.changePage(1);
+                      },
                       child: Text(
                         "Lihat Semua",
                         style: GoogleFonts.poppins(
@@ -153,48 +156,21 @@ class HomeView extends GetView<HomeController> {
                   ],
                 ),
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    spacing: 10, // Jarak antar card
-                    children: [
-                      _buildMenuCard(
-                        icon: Icons.engineering,
-                        label: "Engineering",
-                        color: Colors.purple,
-                        onTap: () {},
-                      ),
-                      _buildMenuCard(
-                        icon: Icons.engineering,
-                        label: "Engineering",
-                        color: Colors.purple,
-                        onTap: () {},
-                      ),
-                      _buildMenuCard(
-                        icon: Icons.engineering,
-                        label: "Engineering",
-                        color: Colors.purple,
-                        onTap: () {},
-                      ),
-                      _buildMenuCard(
-                        icon: Icons.engineering,
-                        label: "Engineering",
-                        color: Colors.purple,
-                        onTap: () {},
-                      ),
-                      _buildMenuCard(
-                        icon: Icons.engineering,
-                        label: "Engineering",
-                        color: Colors.purple,
-                        onTap: () {},
-                      ),
-                    ],
+              SizedBox(height: 10),
+              SizedBox(
+                height: 130,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                    child: ServiceCatalogWidget(
+                      icon: Icons.build_circle_outlined,
+                      color: Colors.orange,
+                    ),
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 20),
               // List Motor Section Title
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -256,9 +232,11 @@ class HomeView extends GetView<HomeController> {
                       final motor = controller.motors[index];
                       return Card(
                         margin: EdgeInsets.only(bottom: 12),
-                        elevation: 2,
+                        elevation: 8,
+                        color: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(color: ColorTheme.primary, width: 1),
                         ),
                         child: Padding(
                           padding: EdgeInsets.all(16),
@@ -269,10 +247,11 @@ class HomeView extends GetView<HomeController> {
                                 children: [
                                   CircleAvatar(
                                     radius: 30,
-                                    backgroundColor: Colors.blue[100],
+                                    backgroundColor: ColorTheme.primary
+                                        .withValues(alpha: 0.2),
                                     child: Icon(
                                       Icons.motorcycle,
-                                      color: Colors.blue[700],
+                                      color: ColorTheme.primary,
                                       size: 30,
                                     ),
                                   ),
@@ -341,7 +320,7 @@ class HomeView extends GetView<HomeController> {
                                     child: OutlinedButton.icon(
                                       onPressed: () {
                                         Get.toNamed(
-                                          '/motor-detail',
+                                          '/detail-motor',
                                           arguments: motor,
                                         );
                                       },

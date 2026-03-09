@@ -11,6 +11,10 @@ abstract class Routes {
   static const EDIT_PROFILE = _Paths.EDIT_PROFILE;
   static const ADD_MOTOR = _Paths.ADD_MOTOR;
   static const BOOKING = _Paths.BOOKING;
+  static const DETAIL_MOTOR = _Paths.DETAIL_MOTOR;
+  static const RIWAYAT_BOOKING = _Paths.RIWAYAT_BOOKING;
+  static const SERVICE = _Paths.SERVICE;
+  static const EDIT_MOTOR = _Paths.EDIT_MOTOR;
 }
 
 abstract class _Paths {
@@ -23,4 +27,8 @@ abstract class _Paths {
   static const EDIT_PROFILE = '/edit-profile';
   static const ADD_MOTOR = '/add-motor';
   static const BOOKING = '/booking';
+  static const DETAIL_MOTOR = '/detail-motor';
+  static const RIWAYAT_BOOKING = '/riwayat-booking';
+  static const SERVICE = '/service';
+  static const EDIT_MOTOR = '/edit-motor';
 }

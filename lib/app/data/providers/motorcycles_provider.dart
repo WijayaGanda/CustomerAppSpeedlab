@@ -9,4 +9,12 @@ class MotorcyclesProvider extends ApiService {
   Future<Response> fetchMyMotors() {
     return get("api/motorcycles/my-motorcycles");
   }
+
+  Future<Response> updateMotorcycle(String id, Map<String, dynamic> data) {
+    return put("api/motorcycles/$id", data);
+  }
+
+  Future<Response> deleteMotorcycle(String id) {
+    return delete("api/motorcycles/$id");
+  }
 }

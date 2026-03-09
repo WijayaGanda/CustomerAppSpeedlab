@@ -19,7 +19,7 @@ class EditProfileView extends GetView<EditProfileController> {
         iconTheme: IconThemeData(color: Colors.white),
         elevation: 0,
         title: Text(
-          "Register  ",
+          "Edit Profil",
           style: GoogleFonts.poppins(
             color: Colors.white,
             fontWeight: FontWeight.bold,

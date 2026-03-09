@@ -253,8 +253,7 @@ class BookingView extends GetView<BookingController> {
                             style: GoogleFonts.poppins(),
                           ),
 
-                          value:
-                              isSelected, // Sekarang ini akan langsung bereaksi
+                          value: isSelected,
 
                           onChanged: (bool? value) {
                             controller.toggleService(service, value ?? false);

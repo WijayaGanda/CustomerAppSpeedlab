@@ -79,6 +79,14 @@ class BookingController extends GetxController {
     }
   }
 
+  int get totalPrice {
+    int total = 0;
+    for (var service in selectedService) {
+      total += service.price.toInt();
+    }
+    return total;
+  }
+
   Future<void> submitBooking() async {
     debugPrint("🚀 Submit booking called");
     debugPrint("Selected services: ${selectedService.length}");
@@ -105,6 +113,7 @@ class BookingController extends GetxController {
         'bookingDate': isoDateTime,
         'bookingTime': isoDateTime,
         'complaint': complaintCtrl.text,
+        'totalPrice': totalPrice,
       });
 
       debugPrint("📥 Response received: ${response.statusCode}");
