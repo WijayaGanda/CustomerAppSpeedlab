@@ -22,11 +22,14 @@ class DashboardView extends GetView<DashboardController> {
         () => SalomonBottomBar(
           currentIndex: controller.currentIndex.value,
           onTap: controller.changePage,
+          backgroundColor: Colors.black,
+          curve: Curves.easeInOut,
           items: [
             SalomonBottomBarItem(
               icon: Icon(Icons.home),
               title: Text("Home", style: GoogleFonts.poppins(fontSize: 12)),
-              selectedColor: ColorTheme.primary,
+              selectedColor: ColorTheme.neonYellow,
+              unselectedColor: Colors.white,
             ),
             SalomonBottomBarItem(
               icon: Icon(Icons.build),
@@ -34,7 +37,8 @@ class DashboardView extends GetView<DashboardController> {
                 "Layanan Servis",
                 style: GoogleFonts.poppins(fontSize: 12),
               ),
-              selectedColor: ColorTheme.primary,
+              selectedColor: ColorTheme.neonYellow,
+              unselectedColor: Colors.white,
             ),
             SalomonBottomBarItem(
               icon: Icon(Icons.history),
@@ -42,12 +46,14 @@ class DashboardView extends GetView<DashboardController> {
                 "Riwayat Booking",
                 style: GoogleFonts.poppins(fontSize: 12),
               ),
-              selectedColor: ColorTheme.primary,
+              selectedColor: ColorTheme.neonYellow,
+              unselectedColor: Colors.white,
             ),
             SalomonBottomBarItem(
               icon: Icon(Icons.person),
               title: Text("Profil", style: GoogleFonts.poppins(fontSize: 12)),
-              selectedColor: ColorTheme.primary,
+              selectedColor: ColorTheme.neonYellow,
+              unselectedColor: Colors.white,
             ),
           ],
         ),

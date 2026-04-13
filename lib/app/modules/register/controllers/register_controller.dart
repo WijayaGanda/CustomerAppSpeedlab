@@ -31,6 +31,12 @@ class RegisterController extends GetxController {
       return;
     }
 
+    if (phoneCtrl.text.isNotEmpty &&
+        !RegExp(r'^\d+$').hasMatch(phoneCtrl.text)) {
+      CustomSnackbar.error("Error", "Nomor telepon harus berupa angka");
+      return;
+    }
+
     isLoading.value = true;
     try {
       final response = await provider.register({
@@ -52,6 +58,8 @@ class RegisterController extends GetxController {
           response.body['message'] ?? 'Registrasi gagal',
         );
       }
+    } catch (e) {
+      CustomSnackbar.error("Error", "Terjadi kesalahan: $e");
     } finally {
       isLoading.value = false;
     }

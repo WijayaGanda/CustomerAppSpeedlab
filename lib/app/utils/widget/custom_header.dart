@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class CustomHeader extends StatelessWidget {
   final String title;
   final String subtitle;
-  final IconData? icon;
+  final Widget? icon;
 
   const CustomHeader({
     super.key,
@@ -47,14 +47,7 @@ class CustomHeader extends StatelessWidget {
                   color: const Color(0xFFD946EF).withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child:
-                    icon != null
-                        ? Icon(
-                          icon,
-                          color: Color.fromARGB(255, 17, 189, 14),
-                          size: 28,
-                        )
-                        : null,
+                child: icon,
               ),
               const SizedBox(width: 16),
               Expanded(

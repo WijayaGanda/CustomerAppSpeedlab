@@ -33,7 +33,11 @@ class RegisterView extends GetView<RegisterController> {
             CustomHeader(
               title: "Silahkan Mendaftar",
               subtitle: "Masukkan Data dengan benar",
-              icon: Icons.app_registration,
+              icon: Image.asset(
+                "assets/images/logo_spl.jpeg",
+                width: 70,
+                height: 70,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(20.0),
@@ -44,6 +48,7 @@ class RegisterView extends GetView<RegisterController> {
                     labelText: "Nama",
                     hintText: "Masukkan nama anda",
                     prefixIcon: Icons.person,
+                    keyboardType: TextInputType.name,
                     isObscure: false,
                   ),
                   CustomTextField(
@@ -51,6 +56,7 @@ class RegisterView extends GetView<RegisterController> {
                     labelText: "Email",
                     hintText: "Masukkan email anda",
                     prefixIcon: Icons.email,
+                    keyboardType: TextInputType.emailAddress,
                     iconLabel: Icons.abc,
                     isObscure: false,
                   ),
@@ -96,15 +102,17 @@ class RegisterView extends GetView<RegisterController> {
                   Obx(
                     () =>
                         controller.isLoading.value
-                            ? const CircularProgressIndicator()
+                            ? CircularProgressIndicator(
+                              color: Color(0xFFFFD700),
+                            )
                             : CustomButton(
                               icon: Icons.app_registration,
                               text: "Daftar",
                               onPressed: () {
                                 controller.register();
                               },
-                              backgroundColor: Color.fromARGB(255, 17, 189, 14),
-                              foregroundColor: Colors.white,
+                              backgroundColor: Color(0xFFFFD700),
+                              foregroundColor: Colors.black,
                             ),
                   ),
                 ],

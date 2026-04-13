@@ -16,12 +16,16 @@ import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/payment_webview/bindings/payment_webview_binding.dart';
+import '../modules/payment_webview/views/payment_webview_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
 import '../modules/riwayat_booking/bindings/riwayat_booking_binding.dart';
 import '../modules/riwayat_booking/views/riwayat_booking_view.dart';
+import '../modules/riwayat_servis/bindings/riwayat_servis_binding.dart';
+import '../modules/riwayat_servis/views/riwayat_servis_view.dart';
 import '../modules/service/bindings/service_binding.dart';
 import '../modules/service/views/service_view.dart';
 
@@ -92,6 +96,16 @@ class AppPages {
       name: _Paths.EDIT_MOTOR,
       page: () => const EditMotorView(),
       binding: EditMotorBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT_WEBVIEW,
+      page: () => const PaymentWebviewView(),
+      binding: PaymentWebviewBinding(),
+    ),
+    GetPage(
+      name: _Paths.RIWAYAT_SERVIS,
+      page: () => const RiwayatServisView(),
+      binding: RiwayatServisBinding(),
     ),
   ];
 }

@@ -14,39 +14,54 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: const Color(
+          0xFFF4F6F9,
+        ), // Koridor putih/abu-abu bersih
         appBar: AppBar(
           automaticallyImplyLeading: false,
+          backgroundColor: Colors.black, // Koridor identitas hitam
+          elevation: 0,
+          scrolledUnderElevation: 0,
           title: Text(
             'Riwayat Booking',
             style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               color: Colors.white,
+              fontSize: 20,
+              letterSpacing: -0.5,
             ),
           ),
-          backgroundColor: ColorTheme.primary,
-          elevation: 0,
-          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                controller.fetchBookings();
+              },
+              icon: Icon(Icons.refresh_rounded),
+              color: Colors.white,
+            ),
+          ],
+          // centerTitle: true,
         ),
         body: Column(
           children: [
             Container(
-              color: ColorTheme.primary,
+              color: Colors.black, // Tab panel konsisten hitam
               child: TabBar(
+                tabAlignment: TabAlignment.start,
                 isScrollable: true,
-                indicatorColor: Colors.white,
-                indicatorWeight: 3,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
+                indicatorColor: ColorTheme.neonYellow, // Identitas Neon Yellow
+                indicatorWeight: 4,
+                labelColor: ColorTheme.neonYellow,
+                unselectedLabelColor: Colors.grey[400],
                 labelStyle: GoogleFonts.poppins(
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
                 unselectedLabelStyle: GoogleFonts.poppins(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
-                tabs: [
+                tabs: const [
                   Tab(text: 'Menunggu Verifikasi'),
                   Tab(text: 'Terverifikasi'),
                   Tab(text: 'Sedang Dikerjakan'),
@@ -61,21 +76,29 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
                 children: [
                   _buildTabContent(
                     'Menunggu Verifikasi',
-                    Icons.hourglass_empty,
+                    Icons.hourglass_empty_rounded,
                     Colors.orange,
                   ),
                   _buildTabContent(
                     'Terverifikasi',
-                    Icons.verified,
-                    Colors.orange,
+                    Icons.verified_rounded,
+                    Colors.blue,
                   ),
                   _buildTabContent(
                     'Sedang Dikerjakan',
-                    Icons.build,
-                    Colors.blue,
+                    Icons.build_circle_rounded,
+                    Colors.teal,
                   ),
-                  _buildTabContent('Selesai', Icons.check_circle, Colors.green),
-                  _buildTabContent('Dibatalkan', Icons.cancel, Colors.red),
+                  _buildTabContent(
+                    'Selesai',
+                    Icons.check_circle_rounded,
+                    Colors.green,
+                  ),
+                  _buildTabContent(
+                    'Dibatalkan',
+                    Icons.cancel_rounded,
+                    Colors.red,
+                  ),
                 ],
               ),
             ),
@@ -88,7 +111,9 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
   Widget _buildTabContent(String status, IconData icon, Color color) {
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Center(child: CircularProgressIndicator());
+        return Center(
+          child: CircularProgressIndicator(color: ColorTheme.neonYellow),
+        );
       }
 
       // Use controller method for filtering
@@ -101,13 +126,30 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 64, color: Colors.grey[300]),
-              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.04),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 56, color: Colors.black38),
+              ),
+              const SizedBox(height: 24),
               Text(
-                'Belum ada booking dengan status $status',
+                'Belum Ada Riwayat',
                 style: GoogleFonts.poppins(
-                  fontSize: 16,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Tidak ada booking dengan status\n"$status"',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
                   color: Colors.grey[500],
+                  height: 1.5,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -118,9 +160,17 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
 
       return RefreshIndicator(
         onRefresh: () => controller.fetchBookings(),
-        child: ListView.builder(
-          padding: const EdgeInsets.all(16),
+        color: Colors.black,
+        backgroundColor: ColorTheme.neonYellow,
+        child: ListView.separated(
+          padding: const EdgeInsets.only(
+            top: 16,
+            left: 24,
+            right: 24,
+            bottom: 40,
+          ),
           itemCount: filteredBookings.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
             final booking = filteredBookings[index];
             return _buildBookingCard(booking, status, icon, color);
@@ -142,20 +192,18 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
     final dateTimeInfo = controller.formatDateTime(booking);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            spreadRadius: 0,
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 15,
             offset: const Offset(0, 5),
           ),
         ],
-        border: Border.all(color: ColorTheme.primary, width: 1),
+        border: Border.all(color: Colors.black.withOpacity(0.05), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,87 +212,106 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Booking ${controller.formatBookingId(booking.id)}',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[800],
+              Expanded(
+                child: Text(
+                  'ID: ${controller.formatBookingId(booking.id)}',
+                  style: GoogleFonts.poppins(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
+                  horizontal: 10,
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: color.withValues(alpha: 0.3),
-                    width: 1,
-                  ),
+                  color: color.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: color.withOpacity(0.2), width: 1),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(icon, color: color, size: 16),
-                    // const SizedBox(width: 4),
-                    // Text(
-                    //   status,
-                    //   style: GoogleFonts.poppins(
-                    //     fontSize: 6,
-                    //     fontWeight: FontWeight.w500,
-                    //     color: color,
-                    //   ),
-                    // ),
+                    Icon(icon, color: color, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      status,
+                      style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: color,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: Divider(height: 1, color: Color(0xFFF4F6F9), thickness: 1.5),
+          ),
 
           // Motor info
           if (motorcycleInfo.isNotEmpty)
-            _buildInfoRow(Icons.motorcycle, motorcycleInfo),
-          if (motorcycleInfo.isNotEmpty) const SizedBox(height: 8),
+            _buildInfoRow(Icons.two_wheeler_rounded, motorcycleInfo),
+          if (motorcycleInfo.isNotEmpty) const SizedBox(height: 10),
 
           // Service info
-          if (servicesInfo.isNotEmpty) _buildInfoRow(Icons.build, servicesInfo),
-          if (servicesInfo.isNotEmpty) const SizedBox(height: 8),
+          if (servicesInfo.isNotEmpty)
+            _buildInfoRow(Icons.miscellaneous_services_rounded, servicesInfo),
+          if (servicesInfo.isNotEmpty) const SizedBox(height: 10),
 
           // Date info
           if (dateTimeInfo.isNotEmpty)
-            _buildInfoRow(Icons.calendar_today, dateTimeInfo),
-          if (dateTimeInfo.isNotEmpty) const SizedBox(height: 8),
+            _buildInfoRow(Icons.calendar_month_rounded, dateTimeInfo),
+          if (dateTimeInfo.isNotEmpty) const SizedBox(height: 10),
 
           // Complaint
           if (booking.complaint != null && booking.complaint!.isNotEmpty)
             _buildInfoRow(
-              Icons.comment,
+              Icons.format_quote_rounded,
               booking.complaint!,
               isExpandable: true,
             ),
           if (booking.complaint != null && booking.complaint!.isNotEmpty)
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
 
           // Total Price
           if (booking.totalPrice != null)
             Row(
               children: [
-                Icon(Icons.payment, color: Colors.grey[600], size: 20),
-                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Icon(
+                    Icons.payments_rounded,
+                    color: Colors.black,
+                    size: 16,
+                  ),
+                ),
+                const SizedBox(width: 10),
                 Text(
                   'Total: ${controller.formatPrice(booking.totalPrice)}',
                   style: GoogleFonts.poppins(
                     fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: ColorTheme.primary,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
                   ),
                 ),
               ],
             ),
+
           if (booking.totalPrice != null) const SizedBox(height: 16),
 
           // Action buttons
@@ -254,39 +321,47 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
                 child: OutlinedButton(
                   onPressed: () => _showBookingDetailModal(booking),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: ColorTheme.primary),
+                    foregroundColor: Colors.black,
+                    side: const BorderSide(color: Colors.black12, width: 1.5),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   child: Text(
                     'Detail',
                     style: GoogleFonts.poppins(
-                      color: ColorTheme.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () => _showActionModal(status, booking),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorTheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Aksi',
-                    style: GoogleFonts.poppins(
-                      color: Colors.white,
                       fontWeight: FontWeight.w600,
+                      fontSize: 13,
                     ),
                   ),
                 ),
               ),
+              // Show action button only if status is not "Dibatalkan"
+              if (status != 'Dibatalkan' && status != 'Terverifikasi') ...[
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _showActionModal(status, booking),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorTheme.neonYellow,
+                      foregroundColor: Colors.black,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: Text(
+                      'Aksi',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ],
@@ -303,12 +378,30 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
       crossAxisAlignment:
           isExpandable ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: [
-        Icon(icon, color: Colors.grey[600], size: 20),
-        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.04),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Icon(icon, color: Colors.black87, size: 16),
+        ),
+        const SizedBox(width: 10),
         Expanded(
-          child: Text(
-            text,
-            style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600]),
+          child: Padding(
+            padding:
+                isExpandable
+                    ? const EdgeInsets.only(top: 4.0)
+                    : EdgeInsets.zero,
+            child: Text(
+              text,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: Colors.black87,
+                fontWeight: FontWeight.w500,
+                height: 1.4,
+              ),
+            ),
           ),
         ),
       ],
@@ -318,89 +411,99 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
   void _showBookingDetailModal(BookingsModel booking) {
     CustomModal.showBottomSheet(
       title: 'Detail Booking',
-      height: Get.height * 0.7,
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildDetailRow(
-            'No. Booking',
-            controller.formatBookingId(booking.id),
-          ),
-          _buildDetailRow('Motor', controller.getMotorcycleInfo(booking)),
-          _buildDetailRow('Layanan', controller.getServicesInfo(booking)),
-          _buildDetailRow(
-            'Tanggal',
-            controller.formatDate(booking.bookingDate),
-          ),
-          _buildDetailRow(
-            'Waktu',
-            '${controller.formatTime(booking.bookingTime)} WIB',
-          ),
-          _buildDetailRow(
-            'Estimasi Selesai',
-            '${controller.formatEstimatedTime(booking)} WIB',
-          ),
-          _buildDetailRow(
-            'Total Biaya',
-            controller.formatPrice(booking.totalPrice),
-          ),
-          _buildDetailRow('Status', booking.status ?? '-'),
+      height: Get.height * 0.75,
+      content: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDetailRow(
+                'No. Booking',
+                controller.formatBookingId(booking.id),
+              ),
+              _buildDetailRow('Motor', controller.getMotorcycleInfo(booking)),
+              _buildDetailRow('Layanan', controller.getServicesInfo(booking)),
+              _buildDetailRow(
+                'Tanggal',
+                controller.formatDate(booking.bookingDate),
+              ),
+              _buildDetailRow(
+                'Waktu',
+                '${controller.formatTime(booking.bookingTime)} WIB',
+              ),
+              _buildDetailRow(
+                'Estimasi Selesai',
+                '${controller.formatEstimatedTime(booking)} WIB',
+              ),
+              _buildDetailRow(
+                'Total Biaya',
+                controller.formatPrice(booking.totalPrice),
+              ),
+              _buildDetailRow('Status', booking.status ?? '-'),
+              _buildDetailRow(
+                'DP Pembayaran',
+                controller.getPaymentStatus(booking.id),
+              ),
 
-          // _buildDetailRow(
-          //   'Diverifikasi Oleh',
-          //   booking.verifiedBy != null ? booking.verifiedBy!.join(', ') : '-',
-          // ),
-          if (booking.complaint != null && booking.complaint!.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            Text(
-              'Keluhan:',
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey[800],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                booking.complaint!,
-                style: GoogleFonts.poppins(
-                  fontSize: 13,
-                  color: Colors.grey[700],
+              if (booking.complaint != null &&
+                  booking.complaint!.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Text(
+                  'Keluhan:',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.black12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    booking.complaint!,
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      color: Colors.black87,
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 20),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: Get.back,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    "Tutup",
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ],
-
-          const SizedBox(height: 16),
-          Text(
-            'Catatan Teknisi / Admin:',
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
-            ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              booking.notes ?? 'Belum ada catatan',
-              style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey[700]),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -413,22 +516,28 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
         actions = [
           ActionSheetItem(
             title: 'Batalkan Booking',
-            icon: Icons.cancel,
+            icon: Icons.cancel_rounded,
             isDestructive: true,
             onPressed: () => controller.cancelBooking(booking),
           ),
+          ActionSheetItem(
+            title: 'Bayar DP',
+            icon: Icons.monetization_on_rounded,
+            isDestructive: false,
+            onPressed: () => controller.makeDownPayment(booking),
+          ),
         ];
         break;
-      case 'Dalam Pengerjaan':
+      case 'Sedang Dikerjakan':
         actions = [
           ActionSheetItem(
             title: 'Hubungi Teknisi',
-            icon: Icons.phone,
+            icon: Icons.phone_rounded,
             onPressed: () => controller.contactTechnician(booking),
           ),
           ActionSheetItem(
             title: 'Lihat Progress',
-            icon: Icons.timeline,
+            icon: Icons.timeline_rounded,
             onPressed: () => controller.viewProgress(booking),
           ),
         ];
@@ -437,8 +546,18 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
         actions = [
           ActionSheetItem(
             title: 'Konfirmasi Pengambilan',
-            icon: Icons.check_circle,
+            icon: Icons.check_circle_rounded,
             onPressed: () => controller.confirmPickup(booking),
+          ),
+          ActionSheetItem(
+            title: 'Download Invoice',
+            icon: Icons.download_rounded,
+            onPressed: () => controller.downloadInvoice(booking),
+          ),
+          ActionSheetItem(
+            title: 'Lihat Riwayat Servis',
+            icon: Icons.timeline_rounded,
+            onPressed: () => controller.viewProgress(booking),
           ),
         ];
         break;
@@ -446,13 +565,8 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
         actions = [
           ActionSheetItem(
             title: 'Beri Rating',
-            icon: Icons.star,
+            icon: Icons.star_rounded,
             onPressed: () => controller.rateService(booking),
-          ),
-          ActionSheetItem(
-            title: 'Download Invoice',
-            icon: Icons.download,
-            onPressed: () => controller.downloadInvoice(booking),
           ),
         ];
         break;
@@ -463,28 +577,37 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 120,
+            width: 140,
             child: Text(
               label,
-              style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey[600]),
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
             ),
           ),
           Text(
             ': ',
-            style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey[600]),
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+            ),
           ),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               value,
               style: GoogleFonts.poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[800],
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
               ),
             ),
           ),

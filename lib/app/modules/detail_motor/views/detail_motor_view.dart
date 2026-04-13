@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
-// import 'package:speedlab_pelanggan/app/utils/widget/custom_snackbar.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/info_card.dart';
 import '../controllers/detail_motor_controller.dart';
 
@@ -12,37 +11,40 @@ class DetailMotorView extends GetView<DetailMotorController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFF4F6F9), // Koridor light background
       appBar: AppBar(
         title: Text(
           'Detail Motor',
           style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
             color: Colors.white,
+            fontSize: 20,
+            letterSpacing: -0.5,
           ),
         ),
-        backgroundColor: ColorTheme.primary,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
+        backgroundColor: Colors.black, // Koridor identitas hitam
+        iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: true,
       ),
       body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics()),
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // Motor info card
             Obx(() {
               final motor = controller.detailMotor.value;
               if (motor == null) {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                    child: CircularProgressIndicator(color: ColorTheme.neonYellow));
               }
 
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   children: [
                     // Motor info container
@@ -50,16 +52,16 @@ class DetailMotorView extends GetView<DetailMotorController> {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.5),
-                            spreadRadius: 0,
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 15,
+                            offset: const Offset(0, 5),
                           ),
                         ],
-                        border: Border.all(color: ColorTheme.primary, width: 1),
+                        border: Border.all(
+                            color: Colors.black.withOpacity(0.05), width: 1.5),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(24.0),
@@ -67,50 +69,58 @@ class DetailMotorView extends GetView<DetailMotorController> {
                           children: [
                             // Motor icon with background
                             Container(
-                              padding: const EdgeInsets.all(20),
+                              padding: const EdgeInsets.all(24),
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    ColorTheme.primary.withOpacity(0.2),
-                                    ColorTheme.primary.withOpacity(0.1),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(50),
+                                color: Colors.black,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
                               ),
-                              child: Icon(
-                                Icons.motorcycle,
-                                color: ColorTheme.primary,
-                                size: 40,
+                              child: const Icon(
+                                Icons.two_wheeler_rounded,
+                                color: Colors.white,
+                                size: 48,
                               ),
                             ),
-                            Divider(),
+                            const SizedBox(height: 24),
+                            const Divider(color: Color(0xFFF4F6F9), thickness: 1.5),
                             const SizedBox(height: 20),
 
                             // Motor details
                             InfoRow(
-                              icon: Icons.directions_car,
+                              icon: Icons.sell_rounded,
                               label: "Brand",
                               value: motor.brand,
+                              iconColor: Colors.black87,
                             ),
                             InfoRow(
-                              icon: Icons.model_training,
+                              icon: Icons.directions_bike_rounded,
                               label: "Model",
                               value: motor.model,
+                              iconColor: Colors.black87,
                             ),
                             InfoRow(
-                              icon: Icons.calendar_today,
+                              icon: Icons.calendar_month_rounded,
                               label: "Tahun",
                               value: motor.year.toString(),
+                              iconColor: Colors.black87,
                             ),
                             InfoRow(
-                              icon: Icons.confirmation_number,
+                              icon: Icons.pin_rounded,
                               label: "No. Polisi",
                               value: motor.licensePlate,
+                              iconColor: Colors.black87,
                             ),
                             InfoRow(
-                              icon: Icons.palette,
+                              icon: Icons.palette_rounded,
                               label: "Warna",
                               value: motor.color,
+                              iconColor: Colors.black87,
                             ),
                           ],
                         ),
@@ -124,9 +134,10 @@ class DetailMotorView extends GetView<DetailMotorController> {
                       children: [
                         Expanded(
                           child: _buildActionButton(
-                            icon: Icons.edit,
-                            label: "Edit Motor",
-                            color: Colors.blue,
+                            icon: Icons.edit_rounded,
+                            label: "Edit",
+                            backgroundColor: ColorTheme.neonYellow,
+                            foregroundColor: Colors.black,
                             onPressed: () {
                               Get.toNamed('/edit-motor', arguments: motor);
                             },
@@ -135,15 +146,17 @@ class DetailMotorView extends GetView<DetailMotorController> {
                         const SizedBox(width: 16),
                         Expanded(
                           child: _buildActionButton(
-                            icon: Icons.delete,
-                            label: "Hapus Motor",
-                            color: Colors.red,
+                            icon: Icons.delete_rounded,
+                            label: "Hapus",
+                            backgroundColor: Colors.red.withOpacity(0.1),
+                            foregroundColor: Colors.red[600]!,
                             onPressed: () {
                               ConfirmationDialog.show(
-                                title: "Konfirmasi",
+                                title: "Hapus Motor",
                                 message:
                                     "Apakah Anda yakin ingin menghapus data motor ini?",
-                                confirmText: "Hapus",
+                                confirmText: "Ya, Hapus",
+                                confirmColor: Colors.red[600]!,
                                 onConfirm: () {
                                   controller.deleteMotor(motor.id.toString());
                                 },
@@ -168,37 +181,34 @@ class DetailMotorView extends GetView<DetailMotorController> {
   Widget _buildActionButton({
     required IconData icon,
     required String label,
-    required Color color,
+    required Color backgroundColor,
+    required Color foregroundColor,
     required VoidCallback onPressed,
   }) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: onPressed,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: color, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: GoogleFonts.poppins(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor,
+        foregroundColor: foregroundColor,
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 20),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -15,6 +15,8 @@ abstract class Routes {
   static const RIWAYAT_BOOKING = _Paths.RIWAYAT_BOOKING;
   static const SERVICE = _Paths.SERVICE;
   static const EDIT_MOTOR = _Paths.EDIT_MOTOR;
+  static const PAYMENT_WEBVIEW = _Paths.PAYMENT_WEBVIEW;
+  static const RIWAYAT_SERVIS = _Paths.RIWAYAT_SERVIS;
 }
 
 abstract class _Paths {
@@ -31,4 +33,6 @@ abstract class _Paths {
   static const RIWAYAT_BOOKING = '/riwayat-booking';
   static const SERVICE = '/service';
   static const EDIT_MOTOR = '/edit-motor';
+  static const PAYMENT_WEBVIEW = '/payment-webview';
+  static const RIWAYAT_SERVIS = '/riwayat-servis';
 }

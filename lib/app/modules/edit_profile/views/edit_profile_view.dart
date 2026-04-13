@@ -33,7 +33,7 @@ class EditProfileView extends GetView<EditProfileController> {
             CustomHeader(
               title: "Ubah Data Profil",
               subtitle: "Perbarui informasi profil Anda",
-              icon: Icons.edit,
+              icon: Icon(Icons.edit, color: ColorTheme.neonYellow),
             ),
             Padding(
               padding: const EdgeInsets.all(20.0),
@@ -78,7 +78,7 @@ class EditProfileView extends GetView<EditProfileController> {
                               text: "Simpan Perubahan",
                               onPressed: controller.updateProfile,
                               backgroundColor: ColorTheme.secondaryColor,
-                              foregroundColor: Colors.white,
+                              foregroundColor: Colors.black,
                               icon: Icons.save,
                             ),
                   ),

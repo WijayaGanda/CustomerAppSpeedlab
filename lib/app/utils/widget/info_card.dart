@@ -92,7 +92,7 @@ class InfoRow extends StatelessWidget {
                   value ?? '-',
                   style: GoogleFonts.poppins(
                     fontSize: 15,
-                    color: Colors.grey[800],
+                    color: const Color(0xFF2D3142),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -114,28 +114,54 @@ class ConfirmationDialog {
     String confirmText = "Ya",
     String cancelText = "Batal",
     Color confirmColor = Colors.red,
-    IconData icon = Icons.warning,
+    IconData icon = Icons.warning_rounded,
   }) {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Row(
           children: [
-            Icon(icon, color: confirmColor),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: confirmColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: confirmColor, size: 24),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w700, 
+                  fontSize: 18,
+                  color: const Color(0xFF2D3142),
+                ),
+              ),
             ),
           ],
         ),
-        content: Text(message, style: GoogleFonts.poppins()),
+        content: Text(
+          message, 
+          style: GoogleFonts.poppins(
+            color: Colors.grey[600],
+            fontSize: 14,
+            height: 1.5,
+          ),
+        ),
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         actions: [
           TextButton(
             onPressed: onCancel ?? () => Get.back(),
             child: Text(
               cancelText,
-              style: GoogleFonts.poppins(color: Colors.grey),
+              style: GoogleFonts.poppins(
+                color: Colors.grey[500],
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           ElevatedButton(
@@ -145,13 +171,16 @@ class ConfirmationDialog {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: confirmColor,
+              foregroundColor: Colors.white,
+              elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
               ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
             child: Text(
               confirmText,
-              style: GoogleFonts.poppins(color: Colors.white),
+              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
             ),
           ),
         ],

@@ -39,7 +39,7 @@ class EditMotorView extends GetView<EditMotorController> {
               CustomHeader(
                 title: "Ubah Data Motor",
                 subtitle: "Perbarui informasi motor Anda",
-                icon: Icons.edit,
+                icon: Icon(Icons.edit, color: ColorTheme.neonYellow),
               ),
               Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -93,8 +93,8 @@ class EditMotorView extends GetView<EditMotorController> {
                                     () => controller.updateMotor(
                                       motor.id.toString(),
                                     ),
-                                backgroundColor: ColorTheme.secondaryColor,
-                                foregroundColor: Colors.white,
+                                backgroundColor: ColorTheme.neonYellow,
+                                foregroundColor: Colors.black,
                                 icon: Icons.save,
                               ),
                     ),

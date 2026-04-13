@@ -13,7 +13,7 @@ class ProfileController extends GetxController {
 
   @override
   void onInit() {
-    super.onInit();
+    super.onInit(); 
     fetchProfile();
   }
 

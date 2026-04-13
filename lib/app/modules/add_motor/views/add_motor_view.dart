@@ -31,7 +31,12 @@ class AddMotorView extends GetView<AddMotorController> {
         child: Column(
           children: [
             CustomHeader(
-              icon: Icons.motorcycle,
+              icon: Icon(
+                Icons.motorcycle,
+                color: ColorTheme.neonYellow,
+                // color: ColorTheme.secondaryColor,
+                // size: 28,
+              ),
               title: "Tambahkan Motor",
               subtitle: "Daftarkan motor kamu untuk memudahkan proses booking!",
             ),
@@ -85,7 +90,7 @@ class AddMotorView extends GetView<AddMotorController> {
                             ? CircularProgressIndicator()
                             : CustomButton(
                               backgroundColor: ColorTheme.secondaryColor,
-                              foregroundColor: Colors.white,
+                              foregroundColor: Colors.black,
                               onPressed: () {
                                 controller.addMotor();
                               },

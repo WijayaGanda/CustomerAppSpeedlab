@@ -32,7 +32,11 @@ class LoginView extends GetView<LoginController> {
             CustomHeader(
               title: "Selamat Datang",
               subtitle: "Silakan masuk untuk melanjutkan",
-              icon: Icons.login,
+              icon: Image.asset(
+                "assets/images/logo_spl.jpeg",
+                width: 70,
+                height: 70,
+              ),
             ),
             SizedBox(height: 30),
             Card(
@@ -100,7 +104,7 @@ class LoginView extends GetView<LoginController> {
                       () =>
                           controller.isLoading.value
                               ? CircularProgressIndicator(
-                                color: Color.fromARGB(255, 17, 189, 14),
+                                color: Color(0xFFFFD700),
                               )
                               : CustomButton(
                                 icon: Icons.door_front_door_outlined,
@@ -108,13 +112,8 @@ class LoginView extends GetView<LoginController> {
                                 onPressed: () {
                                   controller.login();
                                 },
-                                backgroundColor: Color.fromARGB(
-                                  255,
-                                  17,
-                                  189,
-                                  14,
-                                ),
-                                foregroundColor: Colors.white,
+                                backgroundColor: Color(0xFFFFD700),
+                                foregroundColor: Colors.black,
                               ),
                     ),
                     SizedBox(height: 20),

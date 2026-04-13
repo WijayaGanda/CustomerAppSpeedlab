@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_button.dart';
+import 'package:speedlab_pelanggan/app/utils/widget/custom_modal.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_textfield.dart';
 // import 'package:speedlab_pelanggan/app/utils/widget/custom_textfield.dart';
 
@@ -19,7 +20,8 @@ class BookingView extends GetView<BookingController> {
           'Halaman Booking',
           style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -45,7 +47,7 @@ class BookingView extends GetView<BookingController> {
                       const Icon(
                         Icons.motorcycle,
                         size: 40,
-                        color: ColorTheme.secondaryColor,
+                        color: ColorTheme.darkBgPrimary,
                       ),
                       const SizedBox(width: 15),
                       Expanded(
@@ -100,7 +102,7 @@ class BookingView extends GetView<BookingController> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: ColorTheme.secondaryColor),
+                          border: Border.all(color: ColorTheme.darkBgPrimary),
                         ),
                         child: Row(
                           children: [
@@ -156,7 +158,7 @@ class BookingView extends GetView<BookingController> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: ColorTheme.secondaryColor),
+                          border: Border.all(color: ColorTheme.darkBgPrimary),
                         ),
                         child: Row(
                           children: [
@@ -179,9 +181,9 @@ class BookingView extends GetView<BookingController> {
                                       ),
                                     ),
                                     Text(
-                                      controller.selectedDateTime.value != null
-                                          ? controller.bookingTime
-                                          : 'Pilih Waktu',
+                                      controller.bookingTime.isEmpty
+                                          ? 'Pilih Waktu'
+                                          : controller.bookingTime,
                                       style: GoogleFonts.poppins(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -216,55 +218,193 @@ class BookingView extends GetView<BookingController> {
                 ),
               ),
               SizedBox(height: 10),
+              TextButton(
+                onPressed: () {
+                  CustomModal.showBottomSheetWithSearch(
+                    height: Get.height * 0.7,
+                    title: "Layanan Yang Tersedia",
+                    searchHint: "Cari layanan...",
+                    contentBuilder: (searchQuery) {
+                      return Obx(() {
+                        if (controller.isLoading.value) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
+                        // Filter services based on search query
+                        final filteredServices = controller.filterServices(
+                          searchQuery,
+                        );
+
+                        if (filteredServices.isEmpty) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  size: 64,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  searchQuery.isEmpty
+                                      ? "Tidak ada layanan tersedia"
+                                      : "Tidak ada hasil untuk \"$searchQuery\"",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+
+                        return ListView.builder(
+                          itemCount: filteredServices.length,
+                          itemBuilder: (context, index) {
+                            final service = filteredServices[index];
+                            return Card(
+                              elevation: 15,
+                              color: Colors.white,
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 5,
+                              ),
+                              child: Obx(() {
+                                bool isSelected = controller.selectedService
+                                    .any((item) => item.id == service.id);
+
+                                return CheckboxListTile(
+                                  title: Text(
+                                    service.name,
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    service.description,
+                                    style: GoogleFonts.poppins(),
+                                  ),
+                                  value: isSelected,
+                                  onChanged: (bool? value) {
+                                    controller.toggleService(
+                                      service,
+                                      value ?? false,
+                                    );
+                                  },
+                                  activeColor: ColorTheme.primary,
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                );
+                              }),
+                            );
+                          },
+                        );
+                      });
+                    },
+                  );
+                },
+                child: Text(
+                  "Pilih layanan",
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                ),
+              ),
               Obx(() {
-                if (controller.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
+                if (controller.selectedService.isEmpty) {
+                  // Tampilkan teks info jika belum ada yang dipilih
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Text(
+                      "*Belum ada layanan yang dipilih",
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: Colors.redAccent,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  );
                 }
 
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: controller.availableServices.length,
-                  itemBuilder: (context, index) {
-                    final service = controller.availableServices[index];
-                    return Card(
-                      elevation: 15,
-                      color: Colors.white,
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
+                // Tampilkan list card layanan yang sudah dipilih
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15.0,
+                    vertical: 10,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Layanan Terpilih:",
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: Colors.grey[700],
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                      child: Obx(() {
-                        // Pengecekan status centang dipindah ke DALAM Obx
-                        bool isSelected = controller.selectedService.any(
-                          (item) => item.id == service.id,
-                        );
-
-                        return CheckboxListTile(
-                          title: Text(
-                            service.name,
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.bold,
+                      const SizedBox(height: 8),
+                      // Looping data selectedService untuk dibuatkan List
+                      ...controller.selectedService.map((service) {
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 8.0),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: ColorTheme.primary.withValues(alpha: 0.3),
                             ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withValues(alpha: 0.1),
+                                spreadRadius: 1,
+                                blurRadius: 3,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
                           ),
-                          subtitle: Text(
-                            service.description,
-                            style: GoogleFonts.poppins(),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons
+                                    .build_circle, // Icon opsional buat pemanis
+                                color: ColorTheme.secondaryColor,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  service
+                                      .name, // Sesuaikan dengan property model kamu
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              // Tombol untuk hapus layanan langsung dari luar
+                              InkWell(
+                                onTap: () {
+                                  // Memanggil fungsi toggleService untuk membatalkan pilihan
+                                  controller.toggleService(service, false);
+                                },
+                                child: const Icon(
+                                  Icons.remove_circle_outline,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
                           ),
-
-                          value: isSelected,
-
-                          onChanged: (bool? value) {
-                            controller.toggleService(service, value ?? false);
-                          },
-
-                          activeColor: ColorTheme.primary,
-                          controlAffinity: ListTileControlAffinity.leading,
                         );
-                      }),
-                    );
-                  },
+                      }).toList(), // Ubah iterable map menjadi list
+                    ],
+                  ),
                 );
               }),
 
@@ -292,7 +432,7 @@ class BookingView extends GetView<BookingController> {
                           )
                           : CustomButton(
                             backgroundColor: ColorTheme.secondaryColor,
-                            foregroundColor: Colors.white,
+                            foregroundColor: Colors.black,
                             onPressed: () {
                               debugPrint("🔘 Submit button pressed");
                               controller.submitBooking();

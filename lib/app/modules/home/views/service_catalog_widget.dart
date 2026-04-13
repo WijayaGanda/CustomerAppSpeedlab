@@ -4,14 +4,19 @@ import 'package:get/get.dart';
 import 'package:speedlab_pelanggan/app/modules/home/controllers/home_controller.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
 
+String formatPrice(dynamic price) {
+  final intPrice = (price % 1 == 0 ? price.toInt() : price).toString();
+  final regex = RegExp(r'(\d)(?=(\d{3})+(?!\d))');
+  return intPrice.replaceAllMapped(regex, (match) => '${match[1]}.');
+}
+
 class ServiceCatalogWidget extends StatelessWidget {
-  // final Widget buildItem
   final IconData icon;
   final Color color;
   final VoidCallback? onTap;
+
   const ServiceCatalogWidget({
     super.key,
-    // required this.buildItem,
     required this.icon,
     required this.color,
     this.onTap,
@@ -29,40 +34,52 @@ class ServiceCatalogWidget extends StatelessWidget {
           padding: EdgeInsets.only(
             right:
                 index < (c.service.length > 10 ? 5 : c.service.length - 1)
-                    ? 10
+                    ? 12
                     : 0,
           ),
           child: GestureDetector(
             onTap: () => Get.toNamed('/service-detail', arguments: service),
             child: Container(
-              width: 120,
-              height: 130,
+              width: 130, // Lebar proporsional
+              height: 145, // Tinggi proporsional
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
                   ),
                 ],
-                border: Border.all(color: ColorTheme.primary, width: 1),
+                border: Border.all(
+                  color: Colors.black.withOpacity(0.05),
+                  width: 1.5,
+                ),
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 12,
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      padding: EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.1),
+                        color: Colors.black.withOpacity(
+                          0.04,
+                        ), // Latar netral abu-abu
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(icon, size: 25, color: color),
+                      child: Icon(
+                        icon,
+                        size: 26,
+                        color: Colors.black87,
+                      ), // Hitam pekat
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Text(
                       service.name,
                       textAlign: TextAlign.center,
@@ -70,25 +87,28 @@ class ServiceCatalogWidget extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         color: Colors.black87,
                         height: 1.2,
                       ),
                     ),
-                    Divider(
-                      height: 8,
-                      thickness: 1,
-                      indent: 10,
-                      endIndent: 10,
-                      color: Colors.grey[300],
+                    const Spacer(),
+                    Container(
+                      width: 90,
+                      height: 3,
+                      decoration: BoxDecoration(
+                        color: ColorTheme.neonYellow, // Identitas Neon Yellow
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
+                    const SizedBox(height: 6),
                     Text(
-                      'Rp. ${service.price.toString()}',
+                      'Rp ${formatPrice(service.price)}',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: ColorTheme.primary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black, // Tegas hitam
                         height: 1.2,
                       ),
                     ),
