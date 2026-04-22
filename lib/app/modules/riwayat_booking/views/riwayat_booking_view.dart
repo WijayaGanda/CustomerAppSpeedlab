@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_modal.dart';
 import 'package:speedlab_pelanggan/app/data/models/bookings_model.dart';
@@ -110,18 +111,32 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
 
   Widget _buildTabContent(String status, IconData icon, Color color) {
     return Obx(() {
-      if (controller.isLoading.value) {
-        return Center(
-          child: CircularProgressIndicator(color: ColorTheme.neonYellow),
-        );
-      }
+      final bool showSkeleton =
+          controller.isLoading.value &&
+          controller.getBookingsByStatus(status).isEmpty;
 
       // Use controller method for filtering
       List<BookingsModel> filteredBookings = controller.getBookingsByStatus(
         status,
       );
 
-      if (filteredBookings.isEmpty) {
+      final List<BookingsModel> dummyBookings = List.generate(
+        3,
+        (index) => BookingsModel(
+          id: 'dummy-${status.toLowerCase()}-$index',
+          motorcycleId: {'brand': 'Brand', 'model': 'Model'},
+          serviceIds: ['Service 1', 'Service 2'],
+          bookingDate: DateTime.now(),
+          bookingTime: DateTime.now(),
+          complaint: 'Keluhan contoh untuk status $status',
+          status: status,
+          totalPrice: 150000,
+        ),
+      );
+
+      final displayBookings = showSkeleton ? dummyBookings : filteredBookings;
+
+      if (!showSkeleton && displayBookings.isEmpty) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -158,23 +173,26 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
         );
       }
 
-      return RefreshIndicator(
-        onRefresh: () => controller.fetchBookings(),
-        color: Colors.black,
-        backgroundColor: ColorTheme.neonYellow,
-        child: ListView.separated(
-          padding: const EdgeInsets.only(
-            top: 16,
-            left: 24,
-            right: 24,
-            bottom: 40,
+      return Skeletonizer(
+        enabled: showSkeleton,
+        child: RefreshIndicator(
+          onRefresh: () => controller.fetchBookings(),
+          color: Colors.black,
+          backgroundColor: ColorTheme.neonYellow,
+          child: ListView.separated(
+            padding: const EdgeInsets.only(
+              top: 16,
+              left: 24,
+              right: 24,
+              bottom: 40,
+            ),
+            itemCount: displayBookings.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 16),
+            itemBuilder: (context, index) {
+              final booking = displayBookings[index];
+              return _buildBookingCard(booking, status, icon, color);
+            },
           ),
-          itemCount: filteredBookings.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 16),
-          itemBuilder: (context, index) {
-            final booking = filteredBookings[index];
-            return _buildBookingCard(booking, status, icon, color);
-          },
         ),
       );
     });
@@ -284,7 +302,7 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
           if (booking.complaint != null && booking.complaint!.isNotEmpty)
             const SizedBox(height: 10),
 
-          // Total Price
+          // // Total Price
           if (booking.totalPrice != null)
             Row(
               children: [
@@ -311,15 +329,21 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
                 ),
               ],
             ),
-
           if (booking.totalPrice != null) const SizedBox(height: 16),
+
+          // Warranty Status (for finished/completed bookings)
+          if (status == 'Selesai' || status == 'Diambil')
+            _buildWarrantyStatusBadge(booking),
+
+          if (status == 'Selesai' || status == 'Diambil')
+            const SizedBox(height: 16),
 
           // Action buttons
           Row(
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () => _showBookingDetailModal(booking),
+                  onPressed: () => controller.showBookingDetailModal(booking),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.black,
                     side: const BorderSide(color: Colors.black12, width: 1.5),
@@ -559,6 +583,16 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
             icon: Icons.timeline_rounded,
             onPressed: () => controller.viewProgress(booking),
           ),
+          ActionSheetItem(
+            title: 'Klaim Garansi',
+            icon: Icons.shield_rounded,
+            onPressed: () => controller.claimGaransi(booking),
+          ),
+          ActionSheetItem(
+            title: 'Status Klaim Garansi',
+            icon: Icons.show_chart,
+            onPressed: () => controller.fetchWarrantyClaims(booking),
+          ),
         ];
         break;
       case 'Diambil':
@@ -613,6 +647,56 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildWarrantyStatusBadge(BookingsModel booking) {
+    return FutureBuilder<DateTime?>(
+      future: controller.getWarrantyExpiryForBooking(booking.id ?? ''),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Divider();
+        }
+
+        final warrantyExpiry = snapshot.data!;
+        final isExpired = DateTime.now().isAfter(warrantyExpiry);
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color:
+                isExpired
+                    ? Colors.red.withOpacity(0.1)
+                    : Colors.green.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color:
+                  isExpired
+                      ? Colors.red.withOpacity(0.3)
+                      : Colors.green.withOpacity(0.3),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                isExpired ? Icons.warning_rounded : Icons.verified_rounded,
+                size: 16,
+                color: isExpired ? Colors.red : Colors.green,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                isExpired ? 'Garansi Tidak Berlaku' : 'Garansi Masih Berlaku',
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: isExpired ? Colors.red : Colors.green,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:speedlab_pelanggan/app/data/providers/payment_provider.dart';
 import 'package:speedlab_pelanggan/app/data/providers/profile_provider.dart';
 import 'package:speedlab_pelanggan/app/data/providers/service_history_provider.dart';
 import 'package:speedlab_pelanggan/app/data/providers/service_provider.dart';
+import 'package:speedlab_pelanggan/app/data/providers/warranty_claim.dart';
 // import 'package:speedlab_pelanggan/app/modules/edit_profile/controllers/edit_profile_controller.dart';
 import 'package:speedlab_pelanggan/app/modules/home/controllers/home_controller.dart';
 import 'package:speedlab_pelanggan/app/modules/profile/controllers/profile_controller.dart';
@@ -24,6 +25,7 @@ class DashboardBinding extends Bindings {
     Get.put<BookingsProvider>(BookingsProvider());
     Get.put<PaymentProvider>(PaymentProvider());
     Get.put<ServiceHistoryProvider>(ServiceHistoryProvider());
+    Get.put<WarrantyClaimProvider>(WarrantyClaimProvider());
 
     // Then controllers with dependency injection
     Get.lazyPut<DashboardController>(() => DashboardController());

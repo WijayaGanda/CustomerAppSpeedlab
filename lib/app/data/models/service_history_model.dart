@@ -37,6 +37,7 @@ class ServiceHistoryModel {
   final Map<String, dynamic>? bookingId;
   final Map<String, dynamic>? userId;
   final Map<String, dynamic>? motorcycleId;
+  final List<dynamic>? workPhotos;
   final List<dynamic>? serviceIds;
 
   final String? diagnosis;
@@ -45,6 +46,8 @@ class ServiceHistoryModel {
   final String? mechanicName;
   final DateTime? startDate;
   final DateTime? endDate;
+  final int? servicePrice;
+  final int? sparepartPrice;
   final int? totalPrice;
   final DateTime? warrantyExpiry;
   final String? notes;
@@ -63,11 +66,14 @@ class ServiceHistoryModel {
     this.mechanicName,
     this.startDate,
     this.endDate,
+    this.servicePrice,
+    this.sparepartPrice,
     this.totalPrice,
     this.warrantyExpiry,
     this.notes,
     this.status,
     this.complaint,
+    this.workPhotos,
   });
 
   factory ServiceHistoryModel.fromJson(Map<String, dynamic> json) {
@@ -76,6 +82,7 @@ class ServiceHistoryModel {
       bookingId: json['bookingId'],
       userId: json['userId'],
       motorcycleId: json['motorcycleId'],
+      workPhotos: json['workPhotos'],
       serviceIds: json['serviceIds'],
       diagnosis: json['diagnosis'],
       workDone: json['workDone'],
@@ -94,6 +101,8 @@ class ServiceHistoryModel {
               : null,
       endDate:
           json['endDate'] != null ? DateTime.tryParse(json['endDate']) : null,
+      servicePrice: json['servicePrice'],
+      sparepartPrice: json['sparepartPrice'],
       totalPrice: json['totalPrice'],
       warrantyExpiry:
           json['warrantyExpiry'] != null
@@ -121,11 +130,14 @@ class ServiceHistoryModel {
       'mechanicName': mechanicName,
       'startDate': startDate?.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'servicePrice': servicePrice,
+      'sparepartPrice': sparepartPrice,
       'totalPrice': totalPrice,
       'warrantyExpiry': warrantyExpiry?.toIso8601String(),
       'notes': notes,
       'status': status,
       'complaint': complaint,
+      'workPhotos': workPhotos,
     };
   }
 }

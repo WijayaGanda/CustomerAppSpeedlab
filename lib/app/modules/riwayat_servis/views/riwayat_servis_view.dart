@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/info_card.dart';
 import '../controllers/riwayat_servis_controller.dart';
@@ -13,7 +14,10 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
     if (amount == null) return 'Rp 0';
     final intPrice = amount.toString();
     final regex = RegExp(r'(\d)(?=(\d{3})+(?!\d))');
-    final formatted = intPrice.replaceAllMapped(regex, (match) => '${match[1]}.');
+    final formatted = intPrice.replaceAllMapped(
+      regex,
+      (match) => '${match[1]}.',
+    );
     return 'Rp $formatted';
   }
 
@@ -43,32 +47,46 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
         centerTitle: true,
       ),
       body: Obx(() {
-        
-        if (controller.isLoading.value) {
-          return Center(
-            child: CircularProgressIndicator(color: ColorTheme.neonYellow),
-          );
-        }
+        // if (controller.isLoading.value) {
+        //   return Center(
+        //     child: CircularProgressIndicator(color: ColorTheme.neonYellow),
+        //   );
+        // }
 
-        if (controller.serviceHistory.isEmpty) {
+        final isLoading = controller.isLoading.value;
+        final isEmpty = controller.serviceHistory.isEmpty;
+
+        if (!isLoading && isEmpty) {
           return _buildEmptyState();
         }
 
-        final history = controller.serviceHistory.first;
+        final history = isEmpty ? null : controller.serviceHistory.first;
 
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(
-            parent: BouncingScrollPhysics(),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-          child: Column(
-            children: [
-              _buildMainInfoCard(history),
-              const SizedBox(height: 20),
-              if (history.spareParts != null && history.spareParts!.isNotEmpty)
-                _buildSparePartsCard(history.spareParts!),
-              const SizedBox(height: 40),
-            ],
+        return RefreshIndicator(
+          onRefresh: () async {
+            await controller.fetchServiceHistory(
+              controller.selectedBooking.value?.id.toString() ?? '',
+            );
+          },
+          child: Skeletonizer(
+            enabled: isLoading,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              child: Column(
+                children: [
+                  _buildMainInfoCard(history ?? ServiceHistoryModel()),
+                  const SizedBox(height: 20),
+                  if (history != null &&
+                      history.spareParts != null &&
+                      history.spareParts!.isNotEmpty)
+                    _buildSparePartsCard(history.spareParts!),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
           ),
         );
       }),
@@ -148,7 +166,10 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(8),
@@ -198,7 +219,9 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
               value: _formatDate(history.warrantyExpiry),
               iconColor: Colors.black87,
             ),
-            
+            const SizedBox(height: 12),
+            _buildWarrantyStatusBadge(history),
+
             if (history.notes != null && history.notes!.isNotEmpty) ...[
               const SizedBox(height: 12),
               Text(
@@ -216,7 +239,9 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
                 decoration: BoxDecoration(
                   color: ColorTheme.neonYellow.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: ColorTheme.neonYellow.withOpacity(0.5)),
+                  border: Border.all(
+                    color: ColorTheme.neonYellow.withOpacity(0.5),
+                  ),
                 ),
                 child: Text(
                   history.notes!,
@@ -229,6 +254,100 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
                 ),
               ),
             ],
+            SizedBox(height: 15),
+            Text(
+              "Foto Pekerjaan:",
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(height: 15),
+            Obx(() {
+              if (controller.serviceHistory.isEmpty) return const SizedBox();
+
+              // final photos = controller.serviceHistory.first.workPhotos ?? [];
+
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount:
+                    controller.serviceHistory.first.workPhotos?.length ?? 0,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                itemBuilder: (context, index) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Stack(
+                      fit: StackFit.expand, // Memaksa stack memenuhi kotak grid
+                      children: [
+                        // 1. GAMBAR (Paling Belakang)
+                        Image.network(
+                          controller
+                                  .serviceHistory
+                                  .first
+                                  .workPhotos?[index]['path'] ??
+                              'https://via.placeholder.com/150?text=No+Image',
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              color: Colors.grey[200],
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+
+                        // 2. DESKRIPSI (Menumpuk di Atas Gambar Bagian Bawah)
+                        Positioned(
+                          bottom: 0, // Tempel ke bawah
+                          left: 0, // Mentok kiri
+                          right: 0, // Mentok kanan
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 6,
+                            ),
+                            // Memberikan background gradasi atau warna gelap transparan
+                            // agar teks putih tetap terbaca walau fotonya terang
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                            ),
+                            child: Text(
+                              // Mengambil deskripsi, jika null tampilkan strip "-"
+                              controller
+                                      .serviceHistory
+                                      .first
+                                      .workPhotos?[index]['description'] ??
+                                  '-',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10, // Font kecil menyesuaikan 3 kolom
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines:
+                                  2, // Maksimal 2 baris agar tidak menutupi gambar
+                              overflow:
+                                  TextOverflow
+                                      .ellipsis, // Jika kepanjangan jadi "..."
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            }),
 
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
@@ -242,7 +361,11 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
                     color: Colors.black.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.payments_rounded, color: Colors.black87, size: 20),
+                  child: const Icon(
+                    Icons.payments_rounded,
+                    color: Colors.black87,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Column(
@@ -270,6 +393,50 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildWarrantyStatusBadge(ServiceHistoryModel history) {
+    final isWarrantyExpired =
+        history.warrantyExpiry != null &&
+        DateTime.now().isAfter(history.warrantyExpiry!);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color:
+            isWarrantyExpired
+                ? Colors.red.withOpacity(0.1)
+                : Colors.green.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color:
+              isWarrantyExpired
+                  ? Colors.red.withOpacity(0.3)
+                  : Colors.green.withOpacity(0.3),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isWarrantyExpired ? Icons.warning_rounded : Icons.verified_rounded,
+            size: 16,
+            color: isWarrantyExpired ? Colors.red : Colors.green,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            isWarrantyExpired
+                ? 'Garansi Tidak Berlaku'
+                : 'Garansi Masih Berlaku',
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: isWarrantyExpired ? Colors.red : Colors.green,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -302,7 +469,11 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
                     color: Colors.black.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.settings_suggest_rounded, color: Colors.black87, size: 18),
+                  child: const Icon(
+                    Icons.settings_suggest_rounded,
+                    color: Colors.black87,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -320,7 +491,9 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: spareparts.length,
-              separatorBuilder: (context, index) => const Divider(color: Color(0xFFF4F6F9), thickness: 1.5),
+              separatorBuilder:
+                  (context, index) =>
+                      const Divider(color: Color(0xFFF4F6F9), thickness: 1.5),
               itemBuilder: (context, index) {
                 final part = spareparts[index];
                 return Padding(
@@ -329,7 +502,10 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.black.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(8),
@@ -368,7 +544,9 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
                         ),
                       ),
                       Text(
-                        _formatCurrency((part.price ?? 0) * (part.quantity ?? 0)),
+                        _formatCurrency(
+                          (part.price ?? 0) * (part.quantity ?? 0),
+                        ),
                         style: GoogleFonts.poppins(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "397918798086",
+    "project_id": "speedlab-notif",
+    "storage_bucket": "speedlab-notif.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397918798086:android:53e68ee52335585dcb5e87",
+        "android_client_info": {
+          "package_name": "com.example.speedlab_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXTtYsJqDgnNk-arORZ7inAc9Ym4w4w9U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397918798086:android:6fdd5f4e9b856ab5cb5e87",
+        "android_client_info": {
+          "package_name": "com.example.speedlab_pelanggan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXTtYsJqDgnNk-arORZ7inAc9Ym4w4w9U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

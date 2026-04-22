@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_button.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/info_card.dart';
@@ -31,171 +32,172 @@ class ProfileView extends GetView<ProfileController> {
         centerTitle: true,
       ),
       body: Obx(() {
-        if (controller.isLoading.value) {
-          return Center(
-            child: CircularProgressIndicator(color: ColorTheme.primary),
-          );
-        }
         final user = controller.users.value;
+        final isLoading = controller.isLoading.value;
 
         return RefreshIndicator(
           onRefresh: () => controller.fetchProfile(),
           color: ColorTheme.primary,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics(),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            child: Column(
-              children: [
-                // Profile Avatar & Main Info
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+          child: Skeletonizer(
+            enabled: isLoading,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              child: Column(
+                children: [
+                  // Profile Avatar & Main Info
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
                         ),
-                        child: CircleAvatar(
-                          radius: 46,
-                          backgroundColor: const Color(0xFFF4F6F9),
-                          backgroundImage:
-                              user.avatar != null
-                                  ? NetworkImage(user.avatar!)
-                                  : null,
-                          child:
-                              user.avatar == null
-                                  ? Icon(
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: CircleAvatar(
+                            radius: 46,
+                            backgroundColor: const Color(0xFFF4F6F9),
+                            backgroundImage:
+                                user.avatar != null
+                                    ? NetworkImage(user.avatar!)
+                                    : null,
+                            child:
+                                user.avatar == null
+                                    ? Icon(
                                       Icons.person_rounded,
                                       size: 40,
                                       color: Colors.grey[400],
                                     )
-                                  : null,
+                                    : null,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        user.name ?? "Pengguna",
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF2D3142),
+                        const SizedBox(height: 16),
+                        Text(
+                          user.name ?? "Pengguna",
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF2D3142),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        user.email ?? "Email tidak tersedia",
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          color: Colors.grey[500],
+                        const SizedBox(height: 4),
+                        Text(
+                          user.email ?? "Email tidak tersedia",
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: Colors.grey[500],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                // Detail Data Info
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
+                  // Detail Data Info
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        _buildUserInfoRow(
+                          Icons.phone_android_rounded,
+                          "No. Telepon",
+                          user.phone ?? (isLoading ? "081818455032" : null),
+                        ),
+                        const Divider(
+                          height: 24,
+                          color: Color(0xFFF4F6F9),
+                          thickness: 1.5,
+                        ),
+                        _buildUserInfoRow(
+                          Icons.home_work_rounded,
+                          "Alamat",
+                          user.address ??
+                              (isLoading ? "Alamat tidak tersedia" : null),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    children: [
-                      _buildUserInfoRow(
-                        Icons.phone_android_rounded,
-                        "No. Telepon",
-                        user.phone,
-                      ),
-                      const Divider(
-                        height: 24,
-                        color: Color(0xFFF4F6F9),
-                        thickness: 1.5,
-                      ),
-                      _buildUserInfoRow(
-                        Icons.home_work_rounded,
-                        "Alamat",
-                        user.address,
-                      ),
-                    ],
+
+                  const SizedBox(height: 20),
+
+                  // Action Menu
+                  _buildMenuItem(
+                    icon: Icons.edit_rounded,
+                    label: "Edit Profil",
+                    subtitle: "Perbarui informasi pribadi Anda",
+                    onTap: () {
+                      controller.editProfile();
+                    },
                   ),
-                ),
+                  _buildMenuItem(
+                    icon: Icons.security_rounded,
+                    label: "Keamanan",
+                    subtitle: "Ubah kata sandi dan proteksi akun",
+                    onTap: () {
+                      Get.toNamed('/security');
+                    },
+                  ),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 24),
 
-                // Action Menu
-                _buildMenuItem(
-                  icon: Icons.edit_rounded,
-                  label: "Edit Profil",
-                  subtitle: "Perbarui informasi pribadi Anda",
-                  onTap: () {
-                    controller.editProfile();
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.security_rounded,
-                  label: "Keamanan",
-                  subtitle: "Ubah kata sandi dan proteksi akun",
-                  onTap: () {
-                    Get.toNamed('/security');
-                  },
-                ),
+                  // Logout Button
+                  CustomButton(
+                    text: "Keluar Akun",
+                    onPressed: () {
+                      ConfirmationDialog.show(
+                        title: "Konfirmasi Logout",
+                        message:
+                            "Apakah Anda yakin ingin keluar dari akun ini?",
+                        confirmText: "Ya, Keluar",
+                        onConfirm: () {
+                          controller.logout();
+                        },
+                      );
+                    },
+                    backgroundColor: Colors.red.withOpacity(0.1),
+                    foregroundColor: Colors.red[700]!,
+                    icon: Icons.logout_rounded,
+                  ),
 
-                const SizedBox(height: 24),
-
-                // Logout Button
-                CustomButton(
-                  text: "Keluar Akun",
-                  onPressed: () {
-                    ConfirmationDialog.show(
-                      title: "Konfirmasi Logout",
-                      message: "Apakah Anda yakin ingin keluar dari akun ini?",
-                      confirmText: "Ya, Keluar",
-                      onConfirm: () {
-                        controller.logout();
-                      },
-                    );
-                  },
-                  backgroundColor: Colors.red.withOpacity(0.1),
-                  foregroundColor: Colors.red[700]!,
-                  icon: Icons.logout_rounded,
-                ),
-
-                const SizedBox(height: 40),
-              ],
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
         );
@@ -276,9 +278,10 @@ class ProfileView extends GetView<ProfileController> {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: isDanger
-                        ? Colors.red.withOpacity(0.1)
-                        : const Color(0xFFF4F6F9),
+                    color:
+                        isDanger
+                            ? Colors.red.withOpacity(0.1)
+                            : const Color(0xFFF4F6F9),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(

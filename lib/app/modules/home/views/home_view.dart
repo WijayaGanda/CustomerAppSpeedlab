@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:speedlab_pelanggan/app/data/models/motor_model.dart';
+import 'package:speedlab_pelanggan/app/data/providers/notif_provider.dart';
+// import 'package:speedlab_pelanggan/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:speedlab_pelanggan/app/modules/home/views/service_catalog_widget.dart';
+import 'package:speedlab_pelanggan/app/modules/notification/controllers/notification_controller.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 // import 'package:speedlab_pelanggan/app/utils/widget/custom_header.dart';
 // import 'package:speedlab_pelanggan/app/utils/widget/custom_button.dart';
 // import 'package:speedlab_pelanggan/app/data/services/auth_service.dart';
@@ -52,7 +58,65 @@ class HomeView extends GetView<HomeController> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: GestureDetector(
+              onTap: () {
+                controller.moveToNotifications();
+              },
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: null,
+                      icon: Icon(Icons.notifications, color: Colors.black),
+                    ),
+                  ),
+                  Positioned(
+                    child: Obx(() {
+                      if (Get.put(
+                            NotificationController(
+                              provider: Get.find<NotifProvider>(),
+                            ),
+                          ).unreadCount >
+                          0) {
+                        return Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.redAccent,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 1.5),
+                          ),
+                          child: Text(
+                            "${Get.put(NotificationController(provider: Get.find<NotifProvider>())).unreadCount}",
+                            style: GoogleFonts.poppins(
+                              fontSize: 10,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    }),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
             child: GestureDetector(
               onTap: () {
                 controller.dashC.changePage(3); // Ganti ke halaman Profil
@@ -74,8 +138,16 @@ class HomeView extends GetView<HomeController> {
                     radius: 22,
                     backgroundColor: Colors.grey[200],
                     backgroundImage: NetworkImage(
-                      controller.authService.user.value?.avatar ??
-                          "https://ui-avatars.com/api/?name=${controller.authService.user.value?.name ?? 'User'}&background=4CAF50&color=fff",
+                      (controller.authService.user.value?.avatar?.startsWith(
+                                'http',
+                              ) ==
+                              true)
+                          ? controller
+                              .authService
+                              .user
+                              .value!
+                              .avatar! // Jika ya, gunakan avatar dari database
+                          : "https://ui-avatars.com/api/?name=${controller.authService.user.value?.name ?? 'User'}&background=4CAF50&color=fff",
                     ),
                   ),
                 ),
@@ -85,373 +157,412 @@ class HomeView extends GetView<HomeController> {
         ],
       ),
       body: Obx(() {
-        if (controller.isLoading.value && controller.motors.isEmpty) {
-          return Center(
-            child: CircularProgressIndicator(color: ColorTheme.neonYellow),
-          );
-        }
+        final bool showSkeleton = controller.isLoading.value;
 
-        return RefreshIndicator(
-          onRefresh: () async {
-            controller.fetchMyMotors();
-          },
-          color: ColorTheme.neonYellow,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics(),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header Section dengan Gradient
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          ColorTheme.darkBgSecondary,
-                          ColorTheme.darkBgTertiary,
-                        ],
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topRight,
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ColorTheme.darkBgSecondary.withOpacity(0.4),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
+        // Bikin data dummy untuk daftar motor (Sesuaikan 'MotorModel' dengan nama class Anda)
+        final dummyMotors = List.generate(
+          2,
+          (index) => MotorModel(
+            // <--- GANTI dengan nama model Motor Anda jika berbeda
+            brand: "Honda Vario",
+            model: "150 CBS",
+            licensePlate: "B 1234 XYZ",
+            year: 2022,
+            color: "Hitam Doff",
+          ),
+        );
+
+        // Pilih mana list yang mau di-render (asli atau dummy)
+        final displayMotors = showSkeleton ? dummyMotors : controller.motors;
+
+        return Skeletonizer(
+          enabled: showSkeleton,
+          child: RefreshIndicator(
+            onRefresh: () async {
+              try {
+                controller.isLoading.value = true;
+                await Future.wait([
+                  controller.fetchMyMotors(),
+                  controller.fetchServiceList(),
+                ]);
+              } finally {
+                controller.isLoading.value = false;
+              }
+            },
+            color: ColorTheme.neonYellow,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header Section dengan Gradient
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            ColorTheme.darkBgSecondary,
+                            ColorTheme.darkBgTertiary,
+                          ],
+                          begin: Alignment.bottomLeft,
+                          end: Alignment.topRight,
                         ),
-                      ],
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: ColorTheme.darkBgSecondary.withOpacity(0.4),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 24,
+                        horizontal: 20,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Menu Cepat",
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white.withOpacity(0.9),
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildMenuCard(
+                                icon: Icons.add_circle,
+                                label: "Tambah\nMotor",
+                                color: Colors.black,
+                                onTap: controller.moveToAddMotor,
+                              ),
+                              _buildMenuCard(
+                                icon: Icons.build_circle,
+                                label: "Layanan\nServis",
+                                color: Colors.greenAccent,
+                                onTap: () {
+                                  controller.dashC.changePage(1);
+                                },
+                              ),
+                              _buildMenuCard(
+                                icon: Icons.sync,
+                                label: "Refresh\nData",
+                                color: const Color(0xFFA18CD1),
+                                onTap: controller.fetchMyMotors,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 24,
-                      horizontal: 20,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  ),
+
+                  // Layanan Servis Section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Menu Cepat",
+                          "Layanan Servis",
                           style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white.withOpacity(0.9),
-                            letterSpacing: 0.5,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF2D3142),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildMenuCard(
-                              icon: Icons.add_circle,
-                              label: "Tambah\nMotor",
-                              color: Colors.black,
-                              onTap: controller.moveToAddMotor,
+                        GestureDetector(
+                          onTap: () {
+                            controller.dashC.changePage(1);
+                          },
+                          child: Text(
+                            "Lihat Semua",
+                            style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: ColorTheme.primary,
                             ),
-                            _buildMenuCard(
-                              icon: Icons.build_circle,
-                              label: "Layanan\nServis",
-                              color: Colors.greenAccent,
-                              onTap: () {
-                                controller.dashC.changePage(1);
-                              },
-                            ),
-                            _buildMenuCard(
-                              icon: Icons.sync,
-                              label: "Refresh\nData",
-                              color: const Color(0xFFA18CD1),
-                              onTap: controller.fetchMyMotors,
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  Obx(
+                    () => SizedBox(
+                      height: 140,
+                      child:
+                          controller.service.isEmpty && !showSkeleton
+                              ? Center(
+                                child: Text(
+                                  'Tidak ada layanan tersedia',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),
+                              )
+                              : ListView(
+                                scrollDirection: Axis.horizontal,
+                                physics: const BouncingScrollPhysics(),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                children: [
+                                  ServiceCatalogWidget(
+                                    icon: Icons.build_circle_outlined,
+                                    color: Colors.orange,
+                                  ),
+                                ],
+                              ),
+                    ),
+                  ),
 
-                // Layanan Servis Section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Layanan Servis",
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF2D3142),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          controller.dashC.changePage(1);
-                        },
-                        child: Text(
-                          "Lihat Semua",
+                  const SizedBox(height: 24),
+
+                  // List Motor Section Title
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Kendaraan Saya",
                           style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: ColorTheme.primary,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF2D3142),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 140,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children: const [
-                      ServiceCatalogWidget(
-                        icon: Icons.build_circle_outlined,
-                        color: Colors.orange,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // List Motor Section Title
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Kendaraan Saya",
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF2D3142),
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          "${controller.motors.length} Motor",
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[700],
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Content of Motors
-                controller.motors.isEmpty && !controller.isLoading.value
-                    ? _buildEmptyState()
-                    : ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount:
-                          controller.motors.length >= 2
-                              ? 2
-                              : controller.motors.length,
-                      separatorBuilder:
-                          (context, index) => const SizedBox(height: 16),
-                      itemBuilder: (context, index) {
-                        final motor = controller.motors[index];
-                        return Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.04),
-                                blurRadius: 15,
-                                offset: const Offset(0, 5),
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 5,
                               ),
                             ],
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 56,
-                                      height: 56,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            ColorTheme.primary.withOpacity(0.7),
-                                            ColorTheme.primary,
-                                          ],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: ColorTheme.primary
-                                                .withOpacity(0.3),
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: const Icon(
-                                        Icons.sports_motorsports_rounded,
-                                        color: Colors.white,
-                                        size: 28,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${motor.brand} ${motor.model}",
-                                            style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 16,
-                                              color: const Color(0xFF2D3142),
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            motor.licensePlate ??
-                                                "Plat Tidak Tersedia",
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w600,
-                                              color: ColorTheme.primary,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Row(
-                                            children: [
-                                              _buildChip(
-                                                Icons.calendar_month,
-                                                "${motor.year}",
-                                              ),
-                                              const SizedBox(width: 10),
-                                              _buildChip(
-                                                Icons.format_paint_rounded,
-                                                motor.color ?? "-",
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: OutlinedButton(
-                                        onPressed: () {
-                                          Get.toNamed(
-                                            '/detail-motor',
-                                            arguments: motor,
-                                          );
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                          foregroundColor: const Color(
-                                            0xFF2D3142,
-                                          ),
-                                          side: const BorderSide(
-                                            color: Color(0xFFE2E8F0),
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          "Detail",
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Get.toNamed(
-                                            '/booking',
-                                            arguments: motor,
-                                          );
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              ColorTheme.neonYellow,
-                                          foregroundColor: Colors.black87,
-                                          elevation: 0,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          "Booking Servis",
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                          child: Text(
+                            "${controller.motors.length} Motor",
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Content of Motors
+                  displayMotors.isEmpty && !controller.isLoading.value
+                      ? _buildEmptyState()
+                      : ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        itemCount:
+                            displayMotors.length >= 2
+                                ? 2
+                                : displayMotors.length,
+                        separatorBuilder:
+                            (context, index) => const SizedBox(height: 16),
+                        itemBuilder: (context, index) {
+                          final motor = displayMotors[index];
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 15,
+                                  offset: const Offset(0, 5),
                                 ),
                               ],
                             ),
-                          ),
-                        );
-                      },
-                    ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 56,
+                                        height: 56,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              ColorTheme.primary.withOpacity(
+                                                0.7,
+                                              ),
+                                              ColorTheme.primary,
+                                            ],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                          ),
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: ColorTheme.primary
+                                                  .withOpacity(0.3),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                        child: const Icon(
+                                          Icons.sports_motorsports_rounded,
+                                          color: Colors.white,
+                                          size: 28,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "${motor.brand} ${motor.model}",
+                                              style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16,
+                                                color: const Color(0xFF2D3142),
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              motor.licensePlate ??
+                                                  "Plat Tidak Tersedia",
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600,
+                                                color: ColorTheme.primary,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              children: [
+                                                _buildChip(
+                                                  Icons.calendar_month,
+                                                  "${motor.year}",
+                                                ),
+                                                const SizedBox(width: 10),
+                                                _buildChip(
+                                                  Icons.format_paint_rounded,
+                                                  motor.color ?? "-",
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: OutlinedButton(
+                                          onPressed: () {
+                                            Get.toNamed(
+                                              '/detail-motor',
+                                              arguments: motor,
+                                            );
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                            foregroundColor: const Color(
+                                              0xFF2D3142,
+                                            ),
+                                            side: const BorderSide(
+                                              color: Color(0xFFE2E8F0),
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 12,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            "Detail",
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Get.toNamed(
+                                              '/booking',
+                                              arguments: motor,
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                ColorTheme.neonYellow,
+                                            foregroundColor: Colors.black87,
+                                            elevation: 0,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 12,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            "Booking Servis",
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
 
-                const SizedBox(height: 40),
-              ],
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
         );
@@ -616,4 +727,101 @@ class HomeView extends GetView<HomeController> {
       ),
     );
   }
+}
+
+Widget _buildCustomTooltip({
+  required String title,
+  required String description,
+  bool isLast = false, // Penanda jika ini adalah langkah terakhir
+}) {
+  return Container(
+    width: 280, // Sesuaikan lebar tooltip
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.15),
+          blurRadius: 15,
+          offset: const Offset(0, 5),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: const Color(0xFF2D3142),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          description,
+          style: GoogleFonts.poppins(
+            fontSize: 13,
+            color: Colors.grey[600],
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Tombol Skip (Lewati)
+            TextButton(
+              onPressed: () {
+                // Memberhentikan paksa seluruh tutorial
+                ShowcaseView.getNamed('tutorial_home').dismiss();
+              },
+              child: Text(
+                "Lewati",
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ),
+
+            // Tombol Next (Lanjut) / Selesai
+            ElevatedButton(
+              onPressed: () {
+                if (isLast) {
+                  ShowcaseView.getNamed('tutorial_home').dismiss();
+                } else {
+                  // Melanjutkan ke target selanjutnya
+                  ShowcaseView.getNamed('tutorial_home').next();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorTheme.primary,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+              ),
+              child: Text(
+                isLast ? "Selesai" : "Lanjut",
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }

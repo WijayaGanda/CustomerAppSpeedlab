@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:speedlab_pelanggan/app/data/models/service_model.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_modal.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../controllers/service_controller.dart';
 
@@ -40,8 +42,36 @@ class ServiceView extends GetView<ServiceController> {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return Center(
-            child: CircularProgressIndicator(color: ColorTheme.primary),
+          final List<ServiceModel> skeletonServices = List.generate(
+            5,
+            (index) => ServiceModel(
+              id: 'skeleton_$index',
+              name: 'Loading...',
+              description: 'Loading description...',
+              price: 0,
+              estimatedDuration: 0,
+              isActive: true,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+              v: 0,
+            ),
+          );
+          return Skeletonizer(
+            enabled: true,
+            child: ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(
+                top: 10,
+                left: 24,
+                right: 24,
+                bottom: 40,
+              ),
+              itemCount: skeletonServices.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 16),
+              itemBuilder: (context, index) {
+                return _buildServiceCard(skeletonServices[index]);
+              },
+            ), // Konten sebenarnya tidak ditampilkan saat loading
           );
         }
 

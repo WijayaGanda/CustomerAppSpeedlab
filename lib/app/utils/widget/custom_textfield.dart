@@ -14,6 +14,7 @@ class CustomTextField extends StatelessWidget {
   final IconData? iconLabel;
   final String? label;
   final int? maxLines;
+  final bool enabled;
 
   const CustomTextField({
     Key? key,
@@ -28,6 +29,7 @@ class CustomTextField extends StatelessWidget {
     this.iconLabel,
     this.label,
     this.maxLines,
+    this.enabled = true,
   }) : super(key: key);
 
   @override
@@ -61,6 +63,7 @@ class CustomTextField extends StatelessWidget {
             keyboardType: keyboardType,
             validator: validator,
             maxLines: maxLines,
+            enabled: enabled,
             style: GoogleFonts.poppins(fontSize: 15, color: Color(0xFF333333)),
             decoration: InputDecoration(
               hintText: hintText,

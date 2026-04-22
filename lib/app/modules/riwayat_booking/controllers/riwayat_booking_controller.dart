@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:speedlab_pelanggan/app/data/models/bookings_model.dart';
 import 'package:speedlab_pelanggan/app/data/models/payments_model.dart';
@@ -9,6 +10,7 @@ import 'package:speedlab_pelanggan/app/data/providers/payment_provider.dart';
 import 'package:speedlab_pelanggan/app/data/providers/service_history_provider.dart';
 import 'package:speedlab_pelanggan/app/data/services/auth_service.dart';
 import 'package:speedlab_pelanggan/app/utils/helper/pdf_helper.dart';
+import 'package:speedlab_pelanggan/app/utils/widget/custom_modal.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_snackbar.dart';
 // import 'package:speedlab_pelanggan/app/modules/payment_webview/views/payment_webview_view.dart';
 
@@ -36,6 +38,165 @@ class RiwayatBookingController extends GetxController {
   void onInit() {
     super.onInit();
     fetchBookings();
+  }
+
+  void openModalFromNotification(String bookingId) async {
+    debugPrint("Mencari data untuk booking ID: $bookingId");
+    await fetchBookings();
+
+    // fetchServiceHistory(bookingId);
+
+    if (bookings.isEmpty) {
+      once(bookings, (_) {
+        _findAndShowModal(bookingId);
+      });
+    } else {
+      _findAndShowModal(bookingId);
+    }
+  }
+
+  void _findAndShowModal(String bookingId) {
+    var targetBooking = bookings.firstWhere(
+      (b) => b.id == bookingId,
+      orElse: () => BookingsModel(),
+    );
+    if (targetBooking.id != null) {
+      // Delay sedikit (300ms) agar modal muncul dengan mulus tanpa patah-patah
+      Future.delayed(const Duration(milliseconds: 300), () {
+        showBookingDetailModal(targetBooking);
+      });
+    } else {
+      debugPrint("Booking dengan ID $bookingId tidak ditemukan di daftar.");
+    }
+  }
+
+  void showBookingDetailModal(BookingsModel booking) {
+    CustomModal.showBottomSheet(
+      title: 'Detail Booking',
+      height: Get.height * 0.75,
+      content: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDetailRow('No. Booking', formatBookingId(booking.id)),
+              _buildDetailRow('Motor', getMotorcycleInfo(booking)),
+              _buildDetailRow('Layanan', getServicesInfo(booking)),
+              _buildDetailRow('Tanggal', formatDate(booking.bookingDate)),
+              _buildDetailRow(
+                'Waktu',
+                '${formatTime(booking.bookingTime)} WIB',
+              ),
+              _buildDetailRow(
+                'Estimasi Selesai',
+                '${formatEstimatedTime(booking)} WIB',
+              ),
+              _buildDetailRow('Total Biaya', formatPrice(booking.totalPrice)),
+              _buildDetailRow('Status', booking.status ?? '-'),
+              _buildDetailRow('DP Pembayaran', getPaymentStatus(booking.id)),
+
+              if (booking.complaint != null &&
+                  booking.complaint!.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Text(
+                  'Keluhan:',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.black12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    booking.complaint!,
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      color: Colors.black87,
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 20),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: Get.back,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    "Tutup",
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 140,
+            child: Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          Text(
+            ': ',
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              value,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> paymentStatusCheck(String bookingId) async {
@@ -76,6 +237,9 @@ class RiwayatBookingController extends GetxController {
         // Fetch payment status untuk semua booking setelah data bookings berhasil diambil
         if (bookings.isNotEmpty) {
           await fetchAllPaymentStatus();
+        }
+        if (serviceHistory.isNotEmpty && serviceHistory.first.id != null) {
+          fetchServiceHistory(bookings.first.id!);
         }
       } else {
         CustomSnackbar.error("Error", 'Gagal memuat riwayat booking');
@@ -258,6 +422,29 @@ class RiwayatBookingController extends GetxController {
     return DateFormat('HH:mm').format(time);
   }
 
+  // ========== WARRANTY METHODS ==========
+  Future<DateTime?> getWarrantyExpiryForBooking(String bookingId) async {
+    try {
+      final response = await serviceHistoryProvider.getServiceHistory(
+        bookingId,
+      );
+      if (response.isOk) {
+        final serviceHistoryResponse = ServiceHistoryResponse.fromJson(
+          response.body,
+        );
+        return serviceHistoryResponse.data?.warrantyExpiry;
+      }
+    } catch (e) {
+      debugPrint('Error fetching warranty expiry: $e');
+    }
+    return null;
+  }
+
+  bool isWarrantyExpired(DateTime? warrantyExpiry) {
+    if (warrantyExpiry == null) return false;
+    return DateTime.now().isAfter(warrantyExpiry);
+  }
+
   // ========== ACTION METHODS ==========
   void cancelBooking(BookingsModel booking) {
     Get.dialog(
@@ -360,6 +547,14 @@ class RiwayatBookingController extends GetxController {
 
   void viewProgress(BookingsModel booking) {
     Get.toNamed('/riwayat-servis', arguments: booking);
+  }
+
+  void claimGaransi(BookingsModel booking) {
+    Get.toNamed('/klaim-garansi', arguments: booking);
+  }
+
+  void fetchWarrantyClaims(BookingsModel booking) {
+    Get.toNamed('/status-klaim-garansi', arguments: booking);
   }
 
   void rateService(BookingsModel booking) {

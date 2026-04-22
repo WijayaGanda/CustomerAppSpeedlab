@@ -17,6 +17,11 @@ abstract class Routes {
   static const EDIT_MOTOR = _Paths.EDIT_MOTOR;
   static const PAYMENT_WEBVIEW = _Paths.PAYMENT_WEBVIEW;
   static const RIWAYAT_SERVIS = _Paths.RIWAYAT_SERVIS;
+  static const KLAIM_GARANSI = _Paths.KLAIM_GARANSI;
+  static const STATUS_KLAIM_GARANSI = _Paths.STATUS_KLAIM_GARANSI;
+  static const WELCOME_PAGE = _Paths.WELCOME_PAGE;
+  static const SPLASH = _Paths.SPLASH;
+  static const NOTIFICATION = _Paths.NOTIFICATION;
 }
 
 abstract class _Paths {
@@ -35,4 +40,9 @@ abstract class _Paths {
   static const EDIT_MOTOR = '/edit-motor';
   static const PAYMENT_WEBVIEW = '/payment-webview';
   static const RIWAYAT_SERVIS = '/riwayat-servis';
+  static const KLAIM_GARANSI = '/klaim-garansi';
+  static const STATUS_KLAIM_GARANSI = '/status-klaim-garansi';
+  static const WELCOME_PAGE = '/welcome-page';
+  static const SPLASH = '/splash';
+  static const NOTIFICATION = '/notification';
 }

@@ -29,6 +29,8 @@ class BookingsModel {
   bookingTime; // Gunakan DateTime untuk menampung format ISO dari API
   final String? complaint;
   final String? status;
+  final int? servicePrice;
+  final int? sparepartPrice;
   final int? totalPrice;
   final String? notes;
   // final List<dynamic>?
@@ -43,6 +45,8 @@ class BookingsModel {
     this.bookingTime,
     this.complaint,
     this.status,
+    this.servicePrice,
+    this.sparepartPrice,
     this.totalPrice,
     this.notes,
     // this.verifiedBy,
@@ -64,6 +68,8 @@ class BookingsModel {
               : null,
       complaint: json['complaint'],
       status: json['status'],
+      servicePrice: json['servicePrice'],
+      sparepartPrice: json['sparepartPrice'],
       totalPrice: json['totalPrice'],
       notes: json['notes'],
       // verifiedBy: json['verifiedBy'],

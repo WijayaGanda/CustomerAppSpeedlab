@@ -14,8 +14,12 @@ import '../modules/edit_profile/bindings/edit_profile_binding.dart';
 import '../modules/edit_profile/views/edit_profile_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/klaim_garansi/bindings/klaim_garansi_binding.dart';
+import '../modules/klaim_garansi/views/klaim_garansi_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/notification/bindings/notification_binding.dart';
+import '../modules/notification/views/notification_view.dart';
 import '../modules/payment_webview/bindings/payment_webview_binding.dart';
 import '../modules/payment_webview/views/payment_webview_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
@@ -28,6 +32,12 @@ import '../modules/riwayat_servis/bindings/riwayat_servis_binding.dart';
 import '../modules/riwayat_servis/views/riwayat_servis_view.dart';
 import '../modules/service/bindings/service_binding.dart';
 import '../modules/service/views/service_view.dart';
+import '../modules/splash/bindings/splash_binding.dart';
+import '../modules/splash/views/splash_view.dart';
+import '../modules/status_klaim_garansi/bindings/status_klaim_garansi_binding.dart';
+import '../modules/status_klaim_garansi/views/status_klaim_garansi_view.dart';
+import '../modules/welcome_page/bindings/welcome_page_binding.dart';
+import '../modules/welcome_page/views/welcome_page_view.dart';
 
 part 'app_routes.dart';
 
@@ -106,6 +116,31 @@ class AppPages {
       name: _Paths.RIWAYAT_SERVIS,
       page: () => const RiwayatServisView(),
       binding: RiwayatServisBinding(),
+    ),
+    GetPage(
+      name: _Paths.KLAIM_GARANSI,
+      page: () => const KlaimGaransiView(),
+      binding: KlaimGaransiBinding(),
+    ),
+    GetPage(
+      name: _Paths.STATUS_KLAIM_GARANSI,
+      page: () => const StatusKlaimGaransiView(),
+      binding: StatusKlaimGaransiBinding(),
+    ),
+    GetPage(
+      name: _Paths.WELCOME_PAGE,
+      page: () => const WelcomePageView(),
+      binding: WelcomePageBinding(),
+    ),
+    GetPage(
+      name: _Paths.SPLASH,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATION,
+      page: () => const NotificationView(),
+      binding: NotificationBinding(),
     ),
   ];
 }

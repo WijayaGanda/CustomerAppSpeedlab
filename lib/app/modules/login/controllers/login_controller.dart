@@ -1,9 +1,11 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:speedlab_pelanggan/app/data/models/user_model.dart';
 import 'package:speedlab_pelanggan/app/data/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:speedlab_pelanggan/app/data/services/auth_service.dart';
+import 'package:speedlab_pelanggan/app/data/services/fcm_service.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_snackbar.dart';
 
 class LoginController extends GetxController {
@@ -47,6 +49,14 @@ class LoginController extends GetxController {
             "haloo",
             "Selamat Datang ${loginres.user?.name ?? 'User'}",
           );
+          String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+          if (fcmToken != null) {
+            await Get.find<FCMService>().sendFcmTokenToBackend(fcmToken);
+            debugPrint("🔔 Token FCM berhasil didaftarkan ke backend.");
+          } else {
+            debugPrint("🔔 Gagal mendapatkan token FCM untuk registrasi.");
+          }
           Get.offAllNamed('/dashboard', arguments: loginres.user);
           debugPrint('Login successful, token: ${loginres.token}');
         }
@@ -106,6 +116,14 @@ class LoginController extends GetxController {
               "haloo",
               "Selamat Datang ${loginres.user?.name ?? 'User'}",
             );
+            String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+            if (fcmToken != null) {
+              await Get.find<FCMService>().sendFcmTokenToBackend(fcmToken);
+              debugPrint("🔔 Token FCM berhasil didaftarkan ke backend.");
+            } else {
+              debugPrint("🔔 Gagal mendapatkan token FCM untuk registrasi.");
+            }
             Get.offAllNamed('/dashboard', arguments: loginres.user);
           }
         } else {

@@ -1,7 +1,10 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:speedlab_pelanggan/app/data/models/user_model.dart';
 import 'package:speedlab_pelanggan/app/data/providers/profile_provider.dart';
 import 'package:speedlab_pelanggan/app/data/services/auth_service.dart';
+import 'package:speedlab_pelanggan/app/data/services/fcm_service.dart';
+import 'package:flutter/material.dart';
 
 class ProfileController extends GetxController {
   final authservice = Get.find<AuthService>();
@@ -13,7 +16,7 @@ class ProfileController extends GetxController {
 
   @override
   void onInit() {
-    super.onInit(); 
+    super.onInit();
     fetchProfile();
   }
 
@@ -38,7 +41,12 @@ class ProfileController extends GetxController {
     Get.toNamed('/edit-profile', arguments: users.value);
   }
 
-  void logout() {
+  void logout() async {
+    final String? fcmToken = await FirebaseMessaging.instance.getToken();
+    if (fcmToken != null) {
+      await Get.find<FCMService>().unregisterFcmToken(fcmToken);
+      debugPrint("🔔 Token FCM berhasil dihapus dari backend.");
+    }
     authservice.logout();
     Get.offAllNamed('/login');
   }

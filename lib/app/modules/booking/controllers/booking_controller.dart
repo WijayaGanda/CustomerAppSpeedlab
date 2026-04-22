@@ -157,7 +157,7 @@ class BookingController extends GetxController {
         'bookingDate': isoDateTime,
         'bookingTime': isoDateTime,
         'complaint': complaintCtrl.text,
-        'totalPrice': totalPrice,
+        // 'servicePrice': totalPrice,
       });
 
       debugPrint("📥 Response received: ${response.statusCode}");
