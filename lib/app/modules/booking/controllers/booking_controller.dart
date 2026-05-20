@@ -25,6 +25,8 @@ class BookingController extends GetxController {
   var selectedMotor = Rxn<MotorModel>();
   var availableServices = <ServiceModel>[].obs;
   var selectedService = <ServiceModel>[].obs;
+  var selectedVariants = <String, Variant?>{}.obs;
+  var selectedAddons = <String, List<Addon>>{}.obs;
   var isLoading = false.obs;
 
   // Tanggal dan waktu booking
@@ -82,9 +84,47 @@ class BookingController extends GetxController {
   void toggleService(ServiceModel service, bool isChecked) {
     if (isChecked) {
       selectedService.add(service);
+      selectedVariants[service.id] ??= null;
+      selectedAddons[service.id] ??= [];
     } else {
       selectedService.removeWhere((s) => s.id == service.id);
+      selectedVariants.remove(service.id);
+      selectedAddons.remove(service.id);
     }
+  }
+
+  void setSelectedVariant(String serviceId, Variant? variant) {
+    selectedVariants[serviceId] = variant;
+  }
+
+  void toggleAddon(String serviceId, Addon addon, bool isSelected) {
+    final currentAddons = List<Addon>.from(selectedAddons[serviceId] ?? []);
+
+    if (isSelected) {
+      if (!currentAddons.any((item) => item.id == addon.id)) {
+        currentAddons.add(addon);
+      }
+    } else {
+      currentAddons.removeWhere((item) => item.id == addon.id);
+    }
+
+    selectedAddons[serviceId] = currentAddons;
+  }
+
+  Variant? getSelectedVariant(String serviceId) {
+    return selectedVariants[serviceId];
+  }
+
+  List<Addon> getSelectedAddons(String serviceId) {
+    return selectedAddons[serviceId] ?? [];
+  }
+
+  double getServicePrice(ServiceModel service) {
+    final variantModifier = selectedVariants[service.id]?.priceModifier ?? 0;
+    final addonsTotal = getSelectedAddons(
+      service.id,
+    ).fold<double>(0, (sum, addon) => sum + addon.price);
+    return service.basePrice + variantModifier + addonsTotal;
   }
 
   /// Filter layanan berdasarkan search query
@@ -102,11 +142,38 @@ class BookingController extends GetxController {
   }
 
   int get totalPrice {
-    int total = 0;
+    double total = 0;
     for (var service in selectedService) {
-      total += service.price.toInt();
+      total += getServicePrice(service);
     }
-    return total;
+    return total.round();
+  }
+
+  List<Map<String, dynamic>> buildBookingServices() {
+    return selectedService.map((service) {
+      final selectedVariant = getSelectedVariant(service.id);
+      final selectedAddons = getSelectedAddons(service.id);
+
+      return {
+        'serviceId': service.id,
+        'selectedVariant': selectedVariant?.name,
+        'selectedAddons':
+            selectedAddons
+                .map((addon) => {'addonId': addon.id, 'quantity': 1})
+                .toList(),
+      };
+    }).toList();
+  }
+
+  bool isMotorMustBeLeft() {
+    final formUI = selectedService;
+    if (formUI.isEmpty) return false;
+
+    // Jika ada 1 saja layanan yang isWaitable == false, maka HARUS ditinggal
+    for (var service in formUI) {
+      if (service.isWaitable == false) return true;
+    }
+    return false;
   }
 
   Future<void> submitBooking() async {
@@ -145,23 +212,33 @@ class BookingController extends GetxController {
       isLoading.value = true;
       debugPrint("📤 Sending booking request...");
 
-      // Format DateTime ke ISO 8601 untuk server
+      // Format DateTime ke format yang diinginkan backend
       final bookingDateTime = selectedDateTime.value ?? DateTime.now();
-      final isoDateTime = bookingDateTime.toIso8601String();
+      final formattedDate = DateFormat('yyyy-MM-dd').format(bookingDateTime);
+      final formattedTime = DateFormat('HH:mm').format(bookingDateTime);
 
-      debugPrint("📅 Booking DateTime: $isoDateTime");
+      debugPrint("📅 Booking Date: $formattedDate, Time: $formattedTime");
 
-      final response = await provider.addBooking({
+      final bookingServices = buildBookingServices();
+      debugPrint("📋 Booking Services: $bookingServices");
+
+      final payload = {
         'motorcycleId': selectedMotor.value?.id,
-        'serviceIds': selectedService.map((s) => s.id).toList(),
-        'bookingDate': isoDateTime,
-        'bookingTime': isoDateTime,
+        'bookingServices': bookingServices,
+        'bookingDate': formattedDate,
+        'bookingTime': formattedTime,
         'complaint': complaintCtrl.text,
-        // 'servicePrice': totalPrice,
-      });
+      };
+      debugPrint("📤 Payload yang dikirim: $payload");
+
+      final response = await provider.addBooking(payload);
 
       debugPrint("📥 Response received: ${response.statusCode}");
       debugPrint("Response body: ${response.body}");
+
+      if (response.body?['error'] != null) {
+        debugPrint("❌ Backend Error Details: ${response.body['error']}");
+      }
 
       if (response.isOk && response.body != null) {
         CustomSnackbar.success("Sukses", "Booking berhasil dibuat");
@@ -238,7 +315,27 @@ class BookingController extends GetxController {
 
           if (booking['bookingDate'] != null) {
             try {
-              final bookedDateTime = DateTime.parse(booking['bookingDate']);
+              final bookedDate = DateTime.parse(booking['bookingDate']);
+              int hour = bookedDate.hour;
+              int minute = bookedDate.minute;
+
+              // Gunakan bookingTime dari API versi baru (misal "09:00") jika ada
+              if (booking['bookingTime'] != null) {
+                final timeParts = booking['bookingTime'].toString().split(':');
+                if (timeParts.length >= 2) {
+                  hour = int.tryParse(timeParts[0]) ?? hour;
+                  minute = int.tryParse(timeParts[1]) ?? minute;
+                }
+              }
+
+              // Gabungkan tanggal dengan jam yang sudah di parse
+              final bookedDateTime = DateTime(
+                bookedDate.year,
+                bookedDate.month,
+                bookedDate.day,
+                hour,
+                minute,
+              );
               times.add(bookedDateTime);
             } catch (e) {
               debugPrint("Error parsing booking date: $e");

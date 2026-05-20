@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'firebase_options.dart';
 
 import 'package:get/get.dart';
 import 'package:speedlab_pelanggan/app/data/services/auth_service.dart';
@@ -23,7 +24,7 @@ void main() async {
 
   await GetStorage.init();
 
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await Get.putAsync(() => FCMService().init());

@@ -42,11 +42,19 @@ class ProfileController extends GetxController {
   }
 
   void logout() async {
-    final String? fcmToken = await FirebaseMessaging.instance.getToken();
-    if (fcmToken != null) {
-      await Get.find<FCMService>().unregisterFcmToken(fcmToken);
-      debugPrint("🔔 Token FCM berhasil dihapus dari backend.");
+    // 1. Amankan proses FCM dengan try-catch
+    try {
+      final String? fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        await Get.find<FCMService>().unregisterFcmToken(fcmToken);
+        debugPrint("🔔 Token FCM berhasil dihapus dari backend.");
+      }
+    } catch (e) {
+      // Jika error SERVICE_NOT_AVAILABLE muncul, sistem akan masuk ke sini
+      debugPrint("⚠️ Gagal memproses FCM saat logout: $e");
     }
+
+    // 2. Proses logout lokal dan navigasi AKAN TETAP JALAN meskipun FCM error
     authservice.logout();
     Get.offAllNamed('/login');
   }

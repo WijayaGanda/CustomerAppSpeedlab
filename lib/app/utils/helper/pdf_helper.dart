@@ -3,22 +3,19 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class PdfHelper {
-  // Fungsi utama untuk membuat dan mengunduh/share Invoice
   static Future<void> generateAndDownloadInvoice({
     required String bookingId,
     required String customerName,
     required String status,
     required int totalAmount,
     required String date,
-    required List<dynamic> servicesName,
-    required List<dynamic> servicesPrice,
+    required List<String> servicesName, // ✅ Ganti tipe data jadi String
+    required List<int> servicesPrice, // ✅ Ganti tipe data jadi int
     List<Map<String, dynamic>>? spareParts,
     int? serviceHistoryTotalPrice,
   }) async {
-    // 1. Buat dokumen PDF kosong
     final pdf = pw.Document();
 
-    // 2. Gambar isi halamannya
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -26,7 +23,7 @@ class PdfHelper {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              // --- HEADER INVOICE ---
+              // --- HEADER INVOICE --- (Tidak diubah, tetap sama)
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
@@ -88,7 +85,6 @@ class PdfHelper {
               pw.SizedBox(height: 30),
 
               // --- TABEL RINCIAN BIAYA ---
-              // (Untuk simpelnya kita pakai format baris, kalau butuh tabel kompleks bisa pakai pw.Table)
               pw.Container(
                 padding: const pw.EdgeInsets.all(10),
                 color: PdfColors.grey200,
@@ -96,7 +92,7 @@ class PdfHelper {
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
                     pw.Text(
-                      "Deskripsi",
+                      "Deskripsi Layanan",
                       style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                     ),
                     pw.Text(
@@ -106,47 +102,43 @@ class PdfHelper {
                   ],
                 ),
               ),
+
               pw.Container(
                 padding: const pw.EdgeInsets.all(10),
-                child: pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    // Kolom Kiri: Daftar Servis (Looping ke bawah)
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children:
-                          servicesName.map((servis) {
-                            return pw.Padding(
-                              padding: const pw.EdgeInsets.only(
-                                bottom: 4,
-                              ), // Jarak antar baris servis
-                              child: pw.Text("- ${servis.toString()}"),
-                            );
-                          }).toList(),
-                    ),
+                child: pw.Column(
+                  children: List.generate(servicesName.length, (index) {
+                    final namaLayanan = servicesName[index];
+                    final hargaLayanan =
+                        servicesPrice.length > index ? servicesPrice[index] : 0;
 
-                    // Kolom Kanan: Total Harga
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children:
-                          servicesPrice.map((price) {
-                            return pw.Padding(
-                              padding: const pw.EdgeInsets.only(
-                                bottom: 4,
-                              ), // Jarak antar baris servis
-                              child: pw.Text(
-                                "Rp. ${price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
-                              ),
-                            );
-                          }).toList(),
-                    ),
-                  ],
+                    return pw.Padding(
+                      padding: const pw.EdgeInsets.only(
+                        bottom: 12,
+                      ), // Kasih jarak antar layanan lebih lebar
+                      child: pw.Row(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Expanded(
+                            // ✅ HAPUS "- " karena bullet point sudah disetel di controller
+                            // ✅ TAMBAH lineSpacing agar baris Varian & Addons tidak nempel ke atasnya
+                            child: pw.Text(
+                              namaLayanan,
+                              style: const pw.TextStyle(lineSpacing: 2.5),
+                            ),
+                          ),
+                          pw.Text(
+                            "Rp ${hargaLayanan.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
                 ),
               ),
               pw.Divider(),
 
-              // --- SPARE PARTS SECTION ---
+              // --- SPARE PARTS SECTION --- (Tidak diubah, tetap sama)
               if (spareParts != null && spareParts.isNotEmpty) ...[
                 pw.SizedBox(height: 15),
                 pw.Text(
@@ -182,7 +174,7 @@ class PdfHelper {
                                     children: [
                                       pw.Text(
                                         "- $partName",
-                                        style: pw.TextStyle(fontSize: 10),
+                                        style: const pw.TextStyle(fontSize: 10),
                                       ),
                                       pw.Text(
                                         "  Qty: $partQty × Rp ${partPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
@@ -208,34 +200,11 @@ class PdfHelper {
                   ),
                 ),
                 pw.Divider(),
-                // pw.SizedBox(height: 10),
-                // pw.Container(
-                //   alignment: pw.Alignment.centerRight,
-                //   child: pw.Column(
-                //     crossAxisAlignment: pw.CrossAxisAlignment.end,
-                //     children: [
-                //       pw.Text(
-                //         "Total Pergantian Spareparts:",
-                //         style: pw.TextStyle(
-                //           fontSize: 11,
-                //           color: PdfColors.grey700,
-                //         ),
-                //       ),
-                //       pw.Text(
-                //         "Rp ${serviceHistoryTotalPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}')}",
-                //         style: pw.TextStyle(
-                //           fontSize: 14,
-                //           fontWeight: pw.FontWeight.bold,
-                //           color: PdfColors.blue,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
                 pw.SizedBox(height: 10),
               ],
 
-              pw.Divider(),
+              pw.Spacer(),
+
               // --- TOTAL AKHIR ---
               pw.Container(
                 alignment: pw.Alignment.centerRight,
@@ -247,8 +216,7 @@ class PdfHelper {
                   ),
                 ),
               ),
-
-              pw.Spacer(),
+              pw.SizedBox(height: 20),
 
               // --- FOOTER ---
               pw.Center(
@@ -266,10 +234,7 @@ class PdfHelper {
       ),
     );
 
-    // 3. Simpan dan bagikan PDF-nya (Otomatis memunculkan dialog native OS)
     final bytes = await pdf.save();
-
-    // Perintah ini akan memunculkan menu "Save to Files", "Share to WhatsApp", dll di Android/iOS
     await Printing.sharePdf(
       bytes: bytes,
       filename: 'Invoice_Speedlab_$bookingId.pdf',

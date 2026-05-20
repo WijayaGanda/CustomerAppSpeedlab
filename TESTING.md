@@ -186,3 +186,14 @@ Untuk CI/CD, tambahkan di pipeline:
 ## Contact
 
 Jika ada pertanyaan atau issues, silakan hubungi tim development.
+
+
+class MockAuthService extends GetxService implements AuthService {
+  @override
+  final user = Rxn<UserModel>(
+    UserModel(id: '1', name: 'Budi Santoso', email: 'budi@example.com'),
+  );
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}

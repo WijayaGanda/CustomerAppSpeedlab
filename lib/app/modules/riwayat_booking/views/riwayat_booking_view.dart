@@ -127,7 +127,7 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
           motorcycleId: {'brand': 'Brand', 'model': 'Model'},
           serviceIds: ['Service 1', 'Service 2'],
           bookingDate: DateTime.now(),
-          bookingTime: DateTime.now(),
+          bookingTime: DateTime.now().toIso8601String(),
           complaint: 'Keluhan contoh untuk status $status',
           status: status,
           totalPrice: 150000,
@@ -320,7 +320,7 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  'Total: ${controller.formatPrice(booking.totalPrice)}',
+                  'Total: ${controller.formatPrice(booking.totalPrice?.toInt())}',
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -462,7 +462,7 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
               ),
               _buildDetailRow(
                 'Total Biaya',
-                controller.formatPrice(booking.totalPrice),
+                controller.formatPrice(booking.totalPrice?.toInt()),
               ),
               _buildDetailRow('Status', booking.status ?? '-'),
               _buildDetailRow(

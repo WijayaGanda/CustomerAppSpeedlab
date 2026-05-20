@@ -46,14 +46,18 @@ class ServiceView extends GetView<ServiceController> {
             5,
             (index) => ServiceModel(
               id: 'skeleton_$index',
+              category: 'skeleton',
+              availableAddons: [],
+              variants: [],
               name: 'Loading...',
               description: 'Loading description...',
-              price: 0,
+              basePrice: 0,
               estimatedDuration: 0,
               isActive: true,
               createdAt: DateTime.now(),
               updatedAt: DateTime.now(),
               v: 0,
+              isWaitable: false,
             ),
           );
           return Skeletonizer(
@@ -127,55 +131,206 @@ class ServiceView extends GetView<ServiceController> {
           borderRadius: BorderRadius.circular(20),
           onTap: () {
             CustomModal.showBottomSheet(
-              height: Get.height * 0.65,
+              height: Get.height * 0.8,
               title: service.name ?? "Detail Layanan",
-              content: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 20.0,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildDetailRow("Deskripsi", service.description ?? "-"),
-                    _buildDetailRow(
-                      "Harga",
-                      "Rp ${formatPrice(service.price ?? 0)}",
-                    ),
-                    _buildDetailRow(
-                      "Status",
-                      isActive ? "Tersedia" : "Tidak Tersedia",
-                      isActive,
-                    ),
-                    _buildDetailRow(
-                      "Durasi",
-                      "${service.estimatedDuration ?? 0} Menit",
-                    ),
-                    const SizedBox(height: 30),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: Get.back,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorTheme.primary,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          "Kembali",
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                        ),
+              content: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 20.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDetailRow("Deskripsi", service.description ?? "-"),
+                      _buildDetailRow(
+                        "Harga",
+                        "Rp ${formatPrice(service.basePrice ?? 0)}",
                       ),
-                    ),
-                  ],
+                      _buildDetailRow(
+                        "Status",
+                        isActive ? "Tersedia" : "Tidak Tersedia",
+                        isActive,
+                      ),
+                      _buildDetailRow(
+                        "Durasi",
+                        "${service.estimatedDuration ?? 0} Menit",
+                      ),
+                      const SizedBox(height: 24),
+
+                      // ========== VARIANTS SECTION ==========
+                      if (service.variants != null &&
+                          service.variants!.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Variants',
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            ...service.variants!.map((variant) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.blue.withOpacity(0.3),
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        variant.name,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Modifier: Rp ${formatPrice(variant.priceModifier)}',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 11,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                      if (variant.description.isNotEmpty)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 4,
+                                          ),
+                                          child: Text(
+                                            variant.description,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 11,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
+
+                      // ========== ADDONS SECTION ==========
+                      if (service.availableAddons != null &&
+                          service.availableAddons!.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Available Addons',
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            ...service.availableAddons!.map((addon) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.green.withOpacity(0.3),
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              addon.name,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 2,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  addon.type == 'OPTIONAL'
+                                                      ? Colors.orange
+                                                          .withOpacity(0.2)
+                                                      : Colors.red.withOpacity(
+                                                        0.2,
+                                                      ),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                            child: Text(
+                                              addon.type,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.w600,
+                                                color:
+                                                    addon.type == 'OPTIONAL'
+                                                        ? Colors.orange[700]
+                                                        : Colors.red[700],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Harga: Rp ${formatPrice(addon.price)}',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 11,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                      if (addon.description.isNotEmpty)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 4,
+                                          ),
+                                          child: Text(
+                                            addon.description,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 11,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
               ),
             );

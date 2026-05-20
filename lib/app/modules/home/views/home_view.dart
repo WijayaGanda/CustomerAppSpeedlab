@@ -4,20 +4,17 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:speedlab_pelanggan/app/data/models/motor_model.dart';
 import 'package:speedlab_pelanggan/app/data/providers/notif_provider.dart';
-// import 'package:speedlab_pelanggan/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:speedlab_pelanggan/app/modules/home/views/service_catalog_widget.dart';
 import 'package:speedlab_pelanggan/app/modules/notification/controllers/notification_controller.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-// import 'package:speedlab_pelanggan/app/utils/widget/custom_header.dart';
-// import 'package:speedlab_pelanggan/app/utils/widget/custom_button.dart';
-// import 'package:speedlab_pelanggan/app/data/services/auth_service.dart';
 
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,6 +29,9 @@ class HomeView extends GetView<HomeController> {
           padding: const EdgeInsets.only(left: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize:
+                MainAxisSize
+                    .min, // PERBAIKAN: Mencegah overflow vertikal di AppBar
             children: [
               Text(
                 "Selamat Datang,",
@@ -77,12 +77,15 @@ class HomeView extends GetView<HomeController> {
                         ),
                       ],
                     ),
-                    child: IconButton(
-                      onPressed: null,
+                    child: const IconButton(
+                      onPressed:
+                          null, // Dinonaktifkan karena di-handle GestureDetector
                       icon: Icon(Icons.notifications, color: Colors.black),
                     ),
                   ),
                   Positioned(
+                    right: 0,
+                    top: 0,
                     child: Obx(() {
                       if (Get.put(
                             NotificationController(
@@ -142,11 +145,7 @@ class HomeView extends GetView<HomeController> {
                                 'http',
                               ) ==
                               true)
-                          ? controller
-                              .authService
-                              .user
-                              .value!
-                              .avatar! // Jika ya, gunakan avatar dari database
+                          ? controller.authService.user.value!.avatar!
                           : "https://ui-avatars.com/api/?name=${controller.authService.user.value?.name ?? 'User'}&background=4CAF50&color=fff",
                     ),
                   ),
@@ -154,16 +153,15 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
           ),
+          const SizedBox(width: 8), // Sedikit jarak di ujung kanan
         ],
       ),
       body: Obx(() {
         final bool showSkeleton = controller.isLoading.value;
 
-        // Bikin data dummy untuk daftar motor (Sesuaikan 'MotorModel' dengan nama class Anda)
         final dummyMotors = List.generate(
           2,
           (index) => MotorModel(
-            // <--- GANTI dengan nama model Motor Anda jika berbeda
             brand: "Honda Vario",
             model: "150 CBS",
             licensePlate: "B 1234 XYZ",
@@ -172,7 +170,6 @@ class HomeView extends GetView<HomeController> {
           ),
         );
 
-        // Pilih mana list yang mau di-render (asli atau dummy)
         final displayMotors = showSkeleton ? dummyMotors : controller.motors;
 
         return Skeletonizer(
@@ -203,7 +200,7 @@ class HomeView extends GetView<HomeController> {
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           colors: [
                             ColorTheme.darkBgSecondary,
                             ColorTheme.darkBgTertiary,
@@ -237,28 +234,36 @@ class HomeView extends GetView<HomeController> {
                             ),
                           ),
                           const SizedBox(height: 20),
+                          // PERBAIKAN: Menggunakan Row + Expanded agar responsif menyesuaikan layar
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _buildMenuCard(
-                                icon: Icons.add_circle,
-                                label: "Tambah\nMotor",
-                                color: Colors.black,
-                                onTap: controller.moveToAddMotor,
+                              Expanded(
+                                child: _buildMenuCard(
+                                  icon: Icons.add_circle,
+                                  label: "Tambah\nMotor",
+                                  color: Colors.black,
+                                  onTap: controller.moveToAddMotor,
+                                ),
                               ),
-                              _buildMenuCard(
-                                icon: Icons.build_circle,
-                                label: "Layanan\nServis",
-                                color: Colors.greenAccent,
-                                onTap: () {
-                                  controller.dashC.changePage(1);
-                                },
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _buildMenuCard(
+                                  icon: Icons.build_circle,
+                                  label: "Layanan\nServis",
+                                  color: Colors.greenAccent,
+                                  onTap: () {
+                                    controller.dashC.changePage(1);
+                                  },
+                                ),
                               ),
-                              _buildMenuCard(
-                                icon: Icons.sync,
-                                label: "Refresh\nData",
-                                color: const Color(0xFFA18CD1),
-                                onTap: controller.fetchMyMotors,
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _buildMenuCard(
+                                  icon: Icons.sync,
+                                  label: "Refresh\nData",
+                                  color: const Color(0xFFA18CD1),
+                                  onTap: controller.fetchMyMotors,
+                                ),
                               ),
                             ],
                           ),
@@ -300,7 +305,7 @@ class HomeView extends GetView<HomeController> {
                   const SizedBox(height: 12),
                   Obx(
                     () => SizedBox(
-                      height: 140,
+                      height: 165,
                       child:
                           controller.service.isEmpty && !showSkeleton
                               ? Center(
@@ -318,7 +323,7 @@ class HomeView extends GetView<HomeController> {
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 20,
                                 ),
-                                children: [
+                                children: const [
                                   ServiceCatalogWidget(
                                     icon: Icons.build_circle_outlined,
                                     color: Colors.orange,
@@ -467,13 +472,15 @@ class HomeView extends GetView<HomeController> {
                                               ),
                                             ),
                                             const SizedBox(height: 6),
-                                            Row(
+                                            // PERBAIKAN: Menggunakan Wrap agar chip warna motor tidak menabrak pinggir
+                                            Wrap(
+                                              spacing: 8,
+                                              runSpacing: 6,
                                               children: [
                                                 _buildChip(
                                                   Icons.calendar_month,
                                                   "${motor.year}",
                                                 ),
-                                                const SizedBox(width: 10),
                                                 _buildChip(
                                                   Icons.format_paint_rounded,
                                                   motor.color ?? "-",
@@ -596,6 +603,7 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildEmptyState() {
+    // ... Biarkan sama persis ...
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Container(
@@ -687,14 +695,15 @@ class HomeView extends GetView<HomeController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 100, // Menjaga lebar card agar tetep konsisten
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        // PERBAIKAN: width: 100 DIHAPUS. Biarkan dibentuk oleh Expanded di luar.
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.12),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min, // Agar tidak memaksa tinggi ke bawah
           children: [
             Container(
               padding: const EdgeInsets.all(12),
@@ -716,7 +725,7 @@ class HomeView extends GetView<HomeController> {
               label,
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
-                fontSize: 12,
+                fontSize: 11, // Sedikit dikecilkan agar aman di layar sempit
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
                 height: 1.3,
@@ -728,6 +737,8 @@ class HomeView extends GetView<HomeController> {
     );
   }
 }
+
+// ... Fungsi tooltip bisa dipertahankan di bawah sini
 
 Widget _buildCustomTooltip({
   required String title,

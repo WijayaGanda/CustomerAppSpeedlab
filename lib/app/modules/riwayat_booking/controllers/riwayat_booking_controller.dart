@@ -92,7 +92,10 @@ class RiwayatBookingController extends GetxController {
                 'Estimasi Selesai',
                 '${formatEstimatedTime(booking)} WIB',
               ),
-              _buildDetailRow('Total Biaya', formatPrice(booking.totalPrice)),
+              _buildDetailRow(
+                'Total Biaya',
+                formatPrice(booking.totalPrice?.toInt()),
+              ),
               _buildDetailRow('Status', booking.status ?? '-'),
               _buildDetailRow('DP Pembayaran', getPaymentStatus(booking.id)),
 
@@ -342,15 +345,40 @@ class RiwayatBookingController extends GetxController {
   }
 
   String getServicesInfo(BookingsModel booking) {
-    if (booking.serviceIds == null || booking.serviceIds!.isEmpty) return '';
-
-    List<String> serviceNames = [];
-    for (var service in booking.serviceIds!) {
-      if (service is Map && service['name'] != null) {
-        serviceNames.add(service['name']);
-      }
+    if (booking.bookingDetails == null || booking.bookingDetails!.isEmpty) {
+      return '';
     }
-    return serviceNames.join(', ');
+
+    List<String> serviceDetails = [];
+    for (var detail in booking.bookingDetails!) {
+      String serviceName = detail.serviceName ?? '';
+
+      // 1. Ambil Variant
+      String variant = detail.selectedVariant ?? '';
+      String variantStr = variant.isNotEmpty ? ' ($variant)' : '';
+
+      // 2. Ambil Addons (Trik Baru!)
+      String addonsStr = '';
+      if (detail.selectedAddons != null && detail.selectedAddons!.isNotEmpty) {
+        // Ambil semua nama addon, gabungkan dengan koma
+        List<String> addonNames =
+            detail.selectedAddons!
+                .map((addon) => addon.name ?? '')
+                .where((name) => name.isNotEmpty)
+                .toList();
+
+        if (addonNames.isNotEmpty) {
+          // Format tampilannya, misal: " [+ Dyno Rental, Cuci Motor]"
+          addonsStr = ' [+ ${addonNames.join(', ')}]';
+        }
+      }
+
+      // 3. Gabungkan Semuanya: Nama Service + Variant + Addons
+      serviceDetails.add('$serviceName$variantStr$addonsStr');
+    }
+
+    // Kembalikan hasilnya. (Pakai '\n' agar kalau layanannya banyak, dia turun ke baris baru biar rapi)
+    return serviceDetails.join('\n');
   }
 
   // ========== FORMATTING METHODS ==========
@@ -358,8 +386,7 @@ class RiwayatBookingController extends GetxController {
     if (booking.bookingDate == null || booking.bookingTime == null) return '';
 
     final dateFormat = DateFormat('dd MMM yyyy');
-    final timeFormat = DateFormat('HH:mm');
-    return '${dateFormat.format(booking.bookingDate!)}, ${timeFormat.format(booking.bookingTime!)} WIB';
+    return '${dateFormat.format(booking.bookingDate!)}, ${booking.bookingTime!} WIB';
   }
 
   String formatPrice(int? price) {
@@ -373,9 +400,28 @@ class RiwayatBookingController extends GetxController {
   }
 
   String formatEstimatedTime(BookingsModel booking) {
-    if (booking.bookingTime == null) return '-';
-    final estimated = booking.bookingTime!.add(const Duration(hours: 2));
-    return DateFormat('HH:mm').format(estimated);
+    if (booking.bookingTime == null || booking.bookingDate == null) return '-';
+
+    try {
+      final timeParts = booking.bookingTime!.split(':');
+      if (timeParts.length != 2) return '-';
+
+      final hour = int.tryParse(timeParts[0]) ?? 0;
+      final minute = int.tryParse(timeParts[1]) ?? 0;
+
+      DateTime bookingDateTime = DateTime(
+        booking.bookingDate!.year,
+        booking.bookingDate!.month,
+        booking.bookingDate!.day,
+        hour,
+        minute,
+      );
+
+      final estimated = bookingDateTime.add(const Duration(hours: 2));
+      return DateFormat('HH:mm').format(estimated);
+    } catch (e) {
+      return '-';
+    }
   }
 
   // ========== PAYMENT STATUS METHODS ==========
@@ -417,9 +463,11 @@ class RiwayatBookingController extends GetxController {
     return DateFormat('dd MMM yyyy').format(date);
   }
 
-  String formatTime(DateTime? time) {
+  String formatTime(dynamic time) {
     if (time == null) return '-';
-    return DateFormat('HH:mm').format(time);
+    if (time is DateTime) return DateFormat('HH:mm').format(time);
+    if (time is String) return time;
+    return '-';
   }
 
   // ========== WARRANTY METHODS ==========
@@ -566,7 +614,7 @@ class RiwayatBookingController extends GetxController {
     );
   }
 
-  void fetchServiceHistory(String bookingId) async {
+  Future<void> fetchServiceHistory(String bookingId) async {
     isLoading.value = true;
     try {
       final response = await serviceHistoryProvider.getServiceHistory(
@@ -605,12 +653,11 @@ class RiwayatBookingController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Fetch service history terlebih dahulu
       if (booking.id != null) {
-        fetchServiceHistory(booking.id!);
+        await fetchServiceHistory(booking.id!);
       }
 
-      // Generate invoice dengan data dari booking
+      // 1. Ambil data Spareparts
       List<Map<String, dynamic>> sparePartsList = [];
       if (serviceHistory.isNotEmpty &&
           serviceHistory.first.spareParts != null &&
@@ -627,27 +674,52 @@ class RiwayatBookingController extends GetxController {
                 .toList();
       }
 
-      PdfHelper.generateAndDownloadInvoice(
+      /// 2. EXTRACT LAYANAN DARI bookingDetails (Bukan serviceIds lagi)
+      List<String> finalServiceNames = [];
+      List<int> finalServicePrices = [];
+
+      if (booking.bookingDetails != null &&
+          booking.bookingDetails!.isNotEmpty) {
+        for (var detail in booking.bookingDetails!) {
+          // Baris 1: Nama Layanan (Pakai bullet point)
+          String sName = "- ${detail.serviceName ?? 'Layanan'}";
+          // Baris 2: Varian (Turun ke bawah agak menjorok)
+          if (detail.selectedVariant != null &&
+              detail.selectedVariant!.isNotEmpty) {
+            sName += '\n    Varian: ${detail.selectedVariant}';
+          }
+
+          // Baris 3: Addons (Turun ke bawah agak menjorok)
+          if (detail.selectedAddons != null &&
+              detail.selectedAddons!.isNotEmpty) {
+            List<String> addonNames =
+                detail.selectedAddons!
+                    .map((a) => a.name ?? '')
+                    .where((n) => n.isNotEmpty)
+                    .toList();
+            if (addonNames.isNotEmpty) {
+              sName += '\n    Addons: ${addonNames.join(', ')}';
+            }
+          }
+
+          finalServiceNames.add(sName);
+          finalServicePrices.add(detail.subtotal?.toInt() ?? 0);
+        }
+      } else {
+        // Fallback jika kosong
+        finalServiceNames.add('- Layanan Servis Umum');
+        finalServicePrices.add(booking.servicePrice?.toInt() ?? 0);
+      }
+
+      // 3. Generate PDF
+      await PdfHelper.generateAndDownloadInvoice(
         bookingId: booking.id ?? '-',
         customerName: authService.user.value?.name ?? 'Pelanggan Speedlab',
         status: booking.status ?? '-',
-        totalAmount: booking.totalPrice ?? 0,
+        totalAmount: booking.totalPrice?.toInt() ?? 0,
         date: booking.bookingDate?.toLocal().toString().split(' ')[0] ?? '-',
-        servicesName:
-            booking.serviceIds != null
-                ? booking.serviceIds!
-                    .map(
-                      (s) =>
-                          s is Map && s['name'] != null ? s['name'] : 'Layanan',
-                    )
-                    .toList()
-                : ['Layanan'],
-        servicesPrice:
-            booking.serviceIds != null
-                ? booking.serviceIds!
-                    .map((s) => s is Map && s['price'] != null ? s['price'] : 0)
-                    .toList()
-                : [0],
+        servicesName: finalServiceNames, // ✅ Pakai data yang baru diekstrak
+        servicesPrice: finalServicePrices, // ✅ Pakai data yang baru diekstrak
         spareParts: sparePartsList.isNotEmpty ? sparePartsList : null,
         serviceHistoryTotalPrice:
             serviceHistory.isNotEmpty && serviceHistory.first.totalPrice != null

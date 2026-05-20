@@ -40,8 +40,8 @@ class ServiceCatalogWidget extends StatelessWidget {
           child: GestureDetector(
             onTap: () => Get.toNamed('/service-detail', arguments: service),
             child: Container(
-              width: 130, // Lebar proporsional
-              height: 145, // Tinggi proporsional
+              width: 130,
+              height: 140, // Disamakan dengan batas tinggi ListView parent
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
@@ -59,56 +59,61 @@ class ServiceCatalogWidget extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 12,
+                  horizontal: 8, // Diperkecil agar lebih aman
+                  vertical: 10, // Diperkecil dari 12 ke 10
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(10), // Diperkecil dari 12
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(
-                          0.04,
-                        ), // Latar netral abu-abu
+                        color: Colors.black.withOpacity(0.04),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         icon,
-                        size: 26,
+                        size: 24, // Diperkecil dari 26 ke 24
                         color: Colors.black87,
-                      ), // Hitam pekat
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      service.name,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                        height: 1.2,
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(height: 6), // Diperkecil spasi atasnya
+                    // Spacer diganti dengan Expanded pada Text
+                    // agar otomatis menyesuaikan sisa ruang kosong tanpa error
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          service.name,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                            fontSize: 11, // Disusutkan sedikit ke 11
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                            height: 1.2,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 4),
                     Container(
-                      width: 90,
+                      width: 80, // Sedikit diperpendek
                       height: 3,
                       decoration: BoxDecoration(
-                        color: ColorTheme.neonYellow, // Identitas Neon Yellow
+                        color: ColorTheme.neonYellow,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4), // Diperkecil dari 6
                     Text(
-                      'Rp ${formatPrice(service.price)}',
+                      'Rp ${formatPrice(service.basePrice)}',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
-                        fontSize: 12,
+                        fontSize: 11, // Disusutkan ke 11
                         fontWeight: FontWeight.w700,
-                        color: Colors.black, // Tegas hitam
+                        color: Colors.black,
                         height: 1.2,
                       ),
                     ),

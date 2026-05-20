@@ -42,6 +42,7 @@ class LoginController extends GetxController {
       if (response.isOk && response.body != null) {
         final loginres = LoginResponseModel.fromJson(response.body['data']);
         debugPrint('Login response: ${response.body}');
+
         if (loginres.token != null) {
           Get.find<AuthService>().login(loginres.token!, loginres.user!);
           debugPrint("token disimpan");
@@ -49,26 +50,33 @@ class LoginController extends GetxController {
             "haloo",
             "Selamat Datang ${loginres.user?.name ?? 'User'}",
           );
-          String? fcmToken = await FirebaseMessaging.instance.getToken();
 
-          if (fcmToken != null) {
-            await Get.find<FCMService>().sendFcmTokenToBackend(fcmToken);
-            debugPrint("🔔 Token FCM berhasil didaftarkan ke backend.");
-          } else {
-            debugPrint("🔔 Gagal mendapatkan token FCM untuk registrasi.");
+          // PISAHKAN TRY-CATCH UNTUK FCM
+          try {
+            String? fcmToken = await FirebaseMessaging.instance.getToken();
+            if (fcmToken != null) {
+              await Get.find<FCMService>().sendFcmTokenToBackend(fcmToken);
+              debugPrint("🔔 Token FCM berhasil didaftarkan ke backend.");
+            } else {
+              debugPrint("🔔 Gagal mendapatkan token FCM untuk registrasi.");
+            }
+          } catch (fcmError) {
+            debugPrint("⚠️ Peringatan: Gagal mendapatkan token FCM: $fcmError");
+            // Error FCM diabaikan agar tidak mengganggu flow login utama
           }
+
+          // Navigasi tetap berjalan meskipun FCM gagal
           Get.offAllNamed('/dashboard', arguments: loginres.user);
           debugPrint('Login successful, token: ${loginres.token}');
         }
       } else {
-        // Tampilkan pesan error spesifik jika ada dari server
         String messsage =
             response.body?['message'] ??
             "Gagal Login, Cek kembali email dan password";
         CustomSnackbar.error("Error", messsage);
       }
     } catch (e) {
-      debugPrint("Exception occurs: $e"); // Debugging error coding/parsing
+      debugPrint("Exception occurs: $e");
       CustomSnackbar.error("Error", "Terjadi kesalahan sistem: $e");
     } finally {
       isLoading.value = false;
@@ -78,21 +86,16 @@ class LoginController extends GetxController {
   void loginWithGoogle() async {
     try {
       isLoading.value = true;
-
-      // Sign out dulu untuk memastikan popup muncul
       await _googleSignIn.signOut();
-
       debugPrint("=== Memulai Google Sign-In ===");
 
-      // Memicu popup login Google
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
       debugPrint("Google User: ${googleUser?.email}");
 
       if (googleUser == null) {
         debugPrint("User membatalkan login atau terjadi error");
         isLoading.value = false;
-        return; // User membatalkan login
+        return;
       }
 
       debugPrint("Mendapatkan authentication credentials...");
@@ -108,22 +111,34 @@ class LoginController extends GetxController {
       if (idToken != null) {
         debugPrint("Mengirim idToken ke backend...");
         final response = await provider.loginWithGoogle(idToken);
+
         if (response.isOk) {
           final loginres = LoginResponseModel.fromJson(response.body['data']);
+
           if (loginres.token != null) {
             Get.find<AuthService>().login(loginres.token!, loginres.user!);
             CustomSnackbar.success(
               "haloo",
               "Selamat Datang ${loginres.user?.name ?? 'User'}",
             );
-            String? fcmToken = await FirebaseMessaging.instance.getToken();
 
-            if (fcmToken != null) {
-              await Get.find<FCMService>().sendFcmTokenToBackend(fcmToken);
-              debugPrint("🔔 Token FCM berhasil didaftarkan ke backend.");
-            } else {
-              debugPrint("🔔 Gagal mendapatkan token FCM untuk registrasi.");
+            // PISAHKAN TRY-CATCH UNTUK FCM
+            try {
+              String? fcmToken = await FirebaseMessaging.instance.getToken();
+              if (fcmToken != null) {
+                await Get.find<FCMService>().sendFcmTokenToBackend(fcmToken);
+                debugPrint("🔔 Token FCM berhasil didaftarkan ke backend.");
+              } else {
+                debugPrint("🔔 Gagal mendapatkan token FCM untuk registrasi.");
+              }
+            } catch (fcmError) {
+              debugPrint(
+                "⚠️ Peringatan: Gagal mendapatkan token FCM saat Google Sign In: $fcmError",
+              );
+              // Error FCM diabaikan agar tidak mengganggu flow navigasi
             }
+
+            // Navigasi tetap berjalan meskipun FCM gagal
             Get.offAllNamed('/dashboard', arguments: loginres.user);
           }
         } else {
