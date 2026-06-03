@@ -20,18 +20,22 @@ class EditMotorController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    brandCtrl = TextEditingController();
+    modelCtrl = TextEditingController();
+    yearCtrl = TextEditingController();
+    licensePlateCtrl = TextEditingController();
+    colorCtrl = TextEditingController();
+
     if (Get.arguments != null) {
       motor.value = Get.arguments as MotorModel;
+
       debugPrint("EditMotorController received motor: ${motor.value?.model}");
-      brandCtrl = TextEditingController(text: motor.value?.brand ?? '');
-      modelCtrl = TextEditingController(text: motor.value?.model ?? '');
-      yearCtrl = TextEditingController(
-        text: motor.value?.year?.toString() ?? '',
-      );
-      licensePlateCtrl = TextEditingController(
-        text: motor.value?.licensePlate ?? '',
-      );
-      colorCtrl = TextEditingController(text: motor.value?.color ?? '');
+
+      brandCtrl.text = motor.value?.brand ?? '';
+      modelCtrl.text = motor.value?.model ?? '';
+      yearCtrl.text = motor.value?.year?.toString() ?? '';
+      licensePlateCtrl.text = motor.value?.licensePlate ?? '';
+      colorCtrl.text = motor.value?.color ?? '';
     }
   }
 
@@ -59,7 +63,7 @@ class EditMotorController extends GetxController {
         Get.offAllNamed('/dashboard');
       } else {
         String errorMsg = response.body?['message'] ?? "Gagal memperbarui data";
-        Get.snackbar("Error API (${response.statusCode})", errorMsg);
+        CustomSnackbar.error("Error API (${response.statusCode})", errorMsg);
       }
     } catch (e, stacktrace) {
       debugPrint("=== ERROR ASLINYA ADALAH ===");

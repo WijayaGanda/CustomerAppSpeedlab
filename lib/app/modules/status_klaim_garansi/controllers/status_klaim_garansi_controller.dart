@@ -67,9 +67,15 @@ class StatusKlaimGaransiController extends GetxController {
         // Filter warranty claims yang sesuai dengan service history saat ini
         final filteredClaims =
             warrantyResponse.data.where((claim) {
-              return claim.serviceHistoryId?['_id'] ==
-                      serviceHistory.first.id ||
-                  claim.serviceHistoryId == serviceHistory.first.id;
+              final id = claim.serviceHistoryId;
+
+              if (id == null) return false;
+
+              if (id is Map && id['_id'] != null) {
+                return id['_id'] == serviceHistory.first.id;
+              }
+
+              return id == serviceHistory.first.id;
             }).toList();
 
         warrantyClaims.value = filteredClaims;

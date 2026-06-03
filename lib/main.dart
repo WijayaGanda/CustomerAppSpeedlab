@@ -15,7 +15,7 @@ import 'app/routes/app_pages.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   debugPrint("🔔 Background message: ${message.messageId}");
 }
 

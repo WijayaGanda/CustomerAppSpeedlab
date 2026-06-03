@@ -7,16 +7,16 @@ import 'package:speedlab_pelanggan/app/data/providers/motorcycles_provider.dart'
 import 'package:speedlab_pelanggan/app/utils/widget/custom_snackbar.dart';
 
 class DetailMotorController extends GetxController {
-  final BookingsProvider bookingsProvider;
+  // final BookingsProvider bookingsProvider;
   final MotorcyclesProvider motorcyclesProvider;
 
   var detailMotor = Rxn<MotorModel>();
 
   var isLoading = false.obs;
-  var bookings = <BookingsModel>[].obs;
+  // var bookings = <BookingsModel>[].obs;
 
   DetailMotorController({
-    required this.bookingsProvider,
+    // required this.bookingsProvider,
     required this.motorcyclesProvider,
   });
 
@@ -42,13 +42,10 @@ class DetailMotorController extends GetxController {
         CustomSnackbar.success("Berhasil", "Motor berhasil dihapus");
         Get.offAllNamed('/dashboard');
       } else {
-        // Tampilkan pesan error ASLI dari backend jika ada
         String errorMsg = response.body?['message'] ?? "Gagal menghapus data";
         Get.snackbar("Error API (${response.statusCode})", errorMsg);
       }
     } catch (e, stacktrace) {
-      // TAMBAHKAN stacktrace
-      // INI KUNCI UNTUK DEBUGGING
       debugPrint("=== ERROR ASLINYA ADALAH ===");
       debugPrint(e.toString());
       debugPrint("Lokasi Error: $stacktrace");

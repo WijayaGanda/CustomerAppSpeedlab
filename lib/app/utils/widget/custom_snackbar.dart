@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomSnackbar {
+  static bool isTesting = false;
   static void success(String title, String message) {
+    if (isTesting) return;
     Get.snackbar(
       title,
       message,
@@ -13,6 +15,7 @@ class CustomSnackbar {
   }
 
   static void error(String title, String message) {
+    if (isTesting) return;
     Get.snackbar(
       title,
       message,

@@ -5,11 +5,12 @@ import 'package:speedlab_pelanggan/app/data/providers/profile_provider.dart';
 import 'package:speedlab_pelanggan/app/data/services/auth_service.dart';
 import 'package:speedlab_pelanggan/app/data/services/fcm_service.dart';
 import 'package:flutter/material.dart';
+import 'package:speedlab_pelanggan/app/utils/widget/custom_snackbar.dart';
 
 class ProfileController extends GetxController {
-  final authservice = Get.find<AuthService>();
+  final AuthService authservice;
   final ProfileProvider provider;
-  ProfileController({required this.provider});
+  ProfileController({required this.provider, required this.authservice});
 
   var users = UserModel().obs;
   var isLoading = false.obs;
@@ -27,11 +28,13 @@ class ProfileController extends GetxController {
       if (response.isOk && response.body != null) {
         users.value = UserModel.fromJson(response.body['data']);
       } else {
-        Get.snackbar(
+        CustomSnackbar.error(
           'Error',
           response.body?['message'] ?? 'Gagal mengambil data profil',
         );
       }
+    } catch (e) {
+      CustomSnackbar.error('Error', 'Gagal mengambil data profil');
     } finally {
       isLoading.value = false;
     }
@@ -49,6 +52,8 @@ class ProfileController extends GetxController {
         await Get.find<FCMService>().unregisterFcmToken(fcmToken);
         debugPrint("🔔 Token FCM berhasil dihapus dari backend.");
       }
+      await FirebaseMessaging.instance.deleteToken();
+    debugPrint("🗑️ Cache token FCM lokal berhasil dihancurkan.");
     } catch (e) {
       // Jika error SERVICE_NOT_AVAILABLE muncul, sistem akan masuk ke sini
       debugPrint("⚠️ Gagal memproses FCM saat logout: $e");

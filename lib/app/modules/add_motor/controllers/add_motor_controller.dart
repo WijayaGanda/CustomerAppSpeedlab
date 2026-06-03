@@ -4,7 +4,9 @@ import 'package:speedlab_pelanggan/app/data/providers/motorcycles_provider.dart'
 import 'package:speedlab_pelanggan/app/utils/widget/custom_snackbar.dart';
 
 class AddMotorController extends GetxController {
-  final provider = Get.find<MotorcyclesProvider>();
+  final MotorcyclesProvider provider;
+
+  AddMotorController({required this.provider});
   final brand = TextEditingController();
   final model = TextEditingController();
   final year = TextEditingController();
@@ -13,7 +15,7 @@ class AddMotorController extends GetxController {
 
   final isLoading = false.obs;
 
-  void addMotor() async {
+  Future<void> addMotor() async {
     if (brand.text.isEmpty ||
         model.text.isEmpty ||
         year.text.isEmpty ||

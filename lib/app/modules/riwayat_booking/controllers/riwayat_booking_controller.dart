@@ -12,18 +12,20 @@ import 'package:speedlab_pelanggan/app/data/services/auth_service.dart';
 import 'package:speedlab_pelanggan/app/utils/helper/pdf_helper.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_modal.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_snackbar.dart';
+import 'package:flutter/foundation.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:speedlab_pelanggan/app/modules/payment_webview/views/payment_webview_view.dart';
 
 class RiwayatBookingController extends GetxController {
   final BookingsProvider provider;
   final PaymentProvider paymentProvider;
   final ServiceHistoryProvider serviceHistoryProvider;
-  final authService = Get.find<AuthService>();
-
+  final AuthService authService;
   RiwayatBookingController({
     required this.provider,
     required this.paymentProvider,
     required this.serviceHistoryProvider,
+    required this.authService,
   });
 
   var bookings = <BookingsModel>[].obs;
@@ -212,7 +214,7 @@ class RiwayatBookingController extends GetxController {
         paymentsStatus[bookingId] = statusResponse; // Store by booking ID
       }
     } catch (e) {
-      print('Error checking payment status for booking $bookingId: $e');
+      CustomSnackbar.error('Error', 'Gagal memeriksa status pembayaran');
     }
   }
 
@@ -225,7 +227,7 @@ class RiwayatBookingController extends GetxController {
         }
       }
     } catch (e) {
-      print('Error fetching all payment status: $e');
+      CustomSnackbar.error('Error', 'Gagal mengambil status pembayaran');
     }
   }
 
@@ -248,7 +250,7 @@ class RiwayatBookingController extends GetxController {
         CustomSnackbar.error("Error", 'Gagal memuat riwayat booking');
       }
     } catch (e) {
-      Get.snackbar('Error', 'Gagal memuat riwayat booking');
+      CustomSnackbar.error('Error', 'Gagal memuat riwayat booking');
     } finally {
       isLoading.value = false;
     }
@@ -260,14 +262,14 @@ class RiwayatBookingController extends GetxController {
       final response = await provider.cancelBooking(id);
       if (response.isOk) {
         CustomSnackbar.success("Berhasil", "Booking berhasil dibatalkan");
-        fetchBookings(); // Refresh data setelah pembatalan
+        fetchBookings();
       } else {
         String errorMsg =
             response.body?['message'] ?? "Gagal membatalkan booking";
-        Get.snackbar("Error API (${response.statusCode})", errorMsg);
+        CustomSnackbar.error("Error API (${response.statusCode})", errorMsg);
       }
     } catch (e) {
-      Get.snackbar('Error', 'Gagal membatalkan booking');
+      CustomSnackbar.error('Error', 'Gagal membatalkan booking');
     } finally {
       isLoading.value = false;
     }
@@ -277,10 +279,12 @@ class RiwayatBookingController extends GetxController {
     debugPrint("=== ID BOOKING YANG MAU DIBAYAR: $id ===");
 
     if (id == null || id.isEmpty) {
-      Get.snackbar("Error", "ID Booking tidak ditemukan!");
-      return; // Hentikan fungsi jika ID kosong
+      CustomSnackbar.error("Error", "ID Booking tidak ditemukan!");
+      return;
     }
+
     isProcessingPayment.value = true;
+
     try {
       // 1. Minta Token dan URL ke Express.js
       final response = await paymentProvider.createPayment(id);
@@ -288,23 +292,65 @@ class RiwayatBookingController extends GetxController {
       if (response.statusCode == 200 && response.body['success'] == true) {
         String redirectUrl = response.body['redirect_url'];
 
-        // 2. Buka WebView Midtrans
-        final result = await Get.toNamed(
-          '/payment-webview',
-          arguments: redirectUrl,
-        );
+        //  CEK PLATFORM: WEB ATAU MOBILE?
+        if (kIsWeb) {
+          // --- 🌐 LOGIKA KHUSUS WEB ---
+          final Uri url = Uri.parse(redirectUrl);
+          if (await canLaunchUrl(url)) {
+            // Buka Midtrans di tab browser baru
+            await launchUrl(url, mode: LaunchMode.platformDefault);
 
-        // 3. Setelah WebView ditutup (user selesai di Midtrans)
-        if (result == true) {
-          Get.snackbar("Info", "Memeriksa status pembayaran...");
-          fetchBookings(); // Refresh data setelah pembayaran
+            // Karena di web kita tidak bisa mendeteksi kapan tab Midtrans ditutup,
+            // kita berikan dialog popup agar user bisa memicu refresh data secara manual.
+            Get.defaultDialog(
+              title: "Lanjut ke Pembayaran",
+              content: Column(
+                children: [
+                  Text(
+                    "Klik link di bawah ini untuk membuka halaman pembayaran:",
+                  ),
+                  SizedBox(height: 10),
+                  SelectableText(
+                    redirectUrl,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+              textConfirm: "Sudah Bayar",
+              onConfirm: () => fetchBookings(),
+            );
+          } else {
+            CustomSnackbar.error(
+              "Error",
+              "Gagal membuka tautan pembayaran di Web.",
+            );
+          }
+        } else {
+          // --- LOGIKA KHUSUS MOBILE (ANDROID/IOS) ---
+          // 2. Buka WebView Midtrans (Tetap gunakan kode asli Anda)
+          final result = await Get.toNamed(
+            '/payment-webview',
+            arguments: redirectUrl,
+          );
+
+          // 3. Setelah WebView ditutup (user selesai di Midtrans)
+          if (result == true) {
+            CustomSnackbar.error("Info", "Memeriksa status pembayaran...");
+            fetchBookings(); // Refresh data setelah pembayaran
+          }
         }
       } else {
-        Get.snackbar("Gagal", response.body['message'] ?? "Terjadi kesalahan");
+        CustomSnackbar.error(
+          "Gagal",
+          response.body['message'] ?? "Terjadi kesalahan",
+        );
       }
     } catch (e) {
-      Get.snackbar("Error", "Gagal terhubung ke server pembayaran");
-      print(e);
+      CustomSnackbar.error("Error", "Gagal terhubung ke server pembayaran");
+      debugPrint(e.toString());
     } finally {
       isProcessingPayment.value = false;
     }

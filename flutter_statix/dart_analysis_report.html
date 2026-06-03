@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dart Static Analysis Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      font-weight: 300;
+    }
+    
+    .header .subtitle {
+      opacity: 0.9;
+      font-size: 1.1em;
+    }
+    
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 30px;
+      background: #f8f9fa;
+    }
+    
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+    }
+    
+    .card .number {
+      font-size: 2.5em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .card .label {
+      color: #666;
+      font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .card.total .number { color: #3498db; }
+    .card.major .number { color: #f34a12; }
+    .card.minor .number { color: #f1c40f; }
+    .card.info .number { color: #3498db; }
+    
+    .table-container {
+      padding: 30px;
+      overflow-x: auto;
+    }
+    
+    .filter-controls {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    .filter-btn {
+      padding: 8px 16px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9em;
+    }
+    
+    .filter-btn:hover { background: #f8f9fa; }
+    .filter-btn.active { background: #3498db; color: white; border-color: #3498db; }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    th {
+      background: #34495e;
+      color: white;
+      padding: 15px 12px;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #ecf0f1;
+      vertical-align: top;
+    }
+    
+    tr:hover {
+      background: #f8f9fa;
+    }
+    
+    .severity-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: bold;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+    
+    .severity-MAJOR { background: #f34a12; color: white; }
+    .severity-MINOR { background: #f1c40f; color: #333; }
+    .severity-INFO { background: #3498db; color: white; }
+    
+    .file-path {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.9em;
+      color: #2c3e50;
+      word-break: break-all;
+    }
+    
+    .line-col {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.9em;
+      color: #7f8c8d;
+    }
+    
+    .message {
+      max-width: 400px;
+      word-wrap: break-word;
+    }
+    
+    .rule-id {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.8em;
+      background: #ecf0f1;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #2c3e50;
+    }
+    
+    .no-issues {
+      text-align: center;
+      padding: 60px 30px;
+      color: #27ae60;
+    }
+    
+    .no-issues h2 {
+      font-size: 2em;
+      margin-bottom: 15px;
+    }
+    
+    .footer {
+      background: #ecf0f1;
+      padding: 20px 30px;
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 0.9em;
+    }
+    
+    .search-box {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      width: 250px;
+      font-size: 0.9em;
+    }
+    
+    @media (max-width: 768px) {
+      .container { margin: 10px; }
+      .header { padding: 20px; }
+      .header h1 { font-size: 1.8em; }
+      .summary-cards { padding: 20px; gap: 15px; }
+      .table-container { padding: 20px; }
+      .filter-controls { flex-direction: column; align-items: stretch; }
+      .search-box { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+  <h1>🔍 Dart Static Analysis Report</h1>
+  <div class="subtitle">
+    Generated on 23/5/2026 at 22:09
+  </div>
+</div>
+<div class="summary-cards">
+  <div class="card total">
+    <div class="number">180</div>
+    <div class="label">Total Issues</div>
+  </div>
+  <div class="card major">
+    <div class="number">4</div>
+    <div class="label">Major (Error)</div>
+  </div>
+  <div class="card minor">
+    <div class="number">23</div>
+    <div class="label">Minor (Warning)</div>
+  </div>
+  <div class="card info">
+    <div class="number">153</div>
+    <div class="label">Info (Informational)</div>
+  </div>
+</div>
+<div class="table-container">
+<div class="filter-controls">
+<input type="text" class="search-box" placeholder="🔍 Search issues..." id="searchBox">
+<button class="filter-btn active" data-filter="all">All</button>
+<button class="filter-btn" data-filter="MAJOR">Major</button>
+<button class="filter-btn" data-filter="MINOR">Minor</button>
+<button class="filter-btn" data-filter="INFO">Info</button>
+</div>
+<table id="issuesTable">
+<thead>
+<tr>
+<th>Severity</th>
+<th>File</th>
+<th>Location</th>
+<th>Message</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr data-severity="MAJOR">
+<td><span class="severity-badge severity-MAJOR">MAJOR</span></td>
+<td><span class="file-path" title="test\login_view_test.dart">test\login_view_test.dart</span></td>
+<td><span class="line-col">24:8</span></td>
+<td><div class="message">&#39;MockLoginController.login&#39; (&#39;void Function()&#39;) isn&#39;t a valid override of &#39;LoginController.login&#39; (&#39;Future&lt;void&gt; Function()&#39;).</div></td>
+<td><span class="rule-id">invalid_override</span></td>
+</tr>
+<tr data-severity="MAJOR">
+<td><span class="severity-badge severity-MAJOR">MAJOR</span></td>
+<td><span class="file-path" title="test\login_view_test.dart">test\login_view_test.dart</span></td>
+<td><span class="line-col">29:8</span></td>
+<td><div class="message">&#39;MockLoginController.loginWithGoogle&#39; (&#39;void Function()&#39;) isn&#39;t a valid override of &#39;LoginController.loginWithGoogle&#39; (&#39;Future&lt;void&gt; Function()&#39;).</div></td>
+<td><span class="rule-id">invalid_override</span></td>
+</tr>
+<tr data-severity="MAJOR">
+<td><span class="severity-badge severity-MAJOR">MAJOR</span></td>
+<td><span class="file-path" title="test\widget_test.dart">test\widget_test.dart</span></td>
+<td><span class="line-col">16:54</span></td>
+<td><div class="message">Invalid constant value.</div></td>
+<td><span class="rule-id">invalid_constant</span></td>
+</tr>
+<tr data-severity="MAJOR">
+<td><span class="severity-badge severity-MAJOR">MAJOR</span></td>
+<td><span class="file-path" title="test\widget_test.dart">test\widget_test.dart</span></td>
+<td><span class="line-col">16:54</span></td>
+<td><div class="message">The function &#39;MockAuthService&#39; isn&#39;t defined. Try importing the library that defines &#39;MockAuthService&#39;, correcting the name to the name of an existing function, or defining a function named &#39;MockAuthService&#39;.</div></td>
+<td><span class="rule-id">undefined_function</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="integration_test\booking_integration_test.dart">integration_test\booking_integration_test.dart</span></td>
+<td><span class="line-col">6:8</span></td>
+<td><div class="message">Unused import: &#39;package:intl&#47;intl.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="integration_test\booking_integration_test.dart">integration_test\booking_integration_test.dart</span></td>
+<td><span class="line-col">15:8</span></td>
+<td><div class="message">Unused import: &#39;package:speedlab_pelanggan&#47;app&#47;data&#47;models&#47;service_model.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="integration_test\booking_integration_test.dart">integration_test\booking_integration_test.dart</span></td>
+<td><span class="line-col">87:8</span></td>
+<td><div class="message">This method overrides a method annotated as &#39;@mustCallSuper&#39; in &#39;DisposableInterface&#39;, but doesn&#39;t invoke the overridden method.</div></td>
+<td><span class="rule-id">must_call_super</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="integration_test\home_integration_test.dart">integration_test\home_integration_test.dart</span></td>
+<td><span class="line-col">71:8</span></td>
+<td><div class="message">This method overrides a method annotated as &#39;@mustCallSuper&#39; in &#39;DisposableInterface&#39;, but doesn&#39;t invoke the overridden method.</div></td>
+<td><span class="rule-id">must_call_super</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="integration_test\home_integration_test.dart">integration_test\home_integration_test.dart</span></td>
+<td><span class="line-col">83:8</span></td>
+<td><div class="message">This method overrides a method annotated as &#39;@mustCallSuper&#39; in &#39;DisposableInterface&#39;, but doesn&#39;t invoke the overridden method.</div></td>
+<td><span class="rule-id">must_call_super</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="integration_test\profile_integration_test.dart">integration_test\profile_integration_test.dart</span></td>
+<td><span class="line-col">11:8</span></td>
+<td><div class="message">Unused import: &#39;package:speedlab_pelanggan&#47;app&#47;data&#47;models&#47;user_model.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="lib\app\modules\booking\controllers\booking_controller.dart">lib\app\modules\booking\controllers\booking_controller.dart</span></td>
+<td><span class="line-col">466:39</span></td>
+<td><div class="message">The value of the local variable &#39;isBooked&#39; isn&#39;t used. Try removing the variable or using it.</div></td>
+<td><span class="rule-id">unused_local_variable</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="lib\app\modules\home\controllers\home_controller.dart">lib\app\modules\home\controllers\home_controller.dart</span></td>
+<td><span class="line-col">3:8</span></td>
+<td><div class="message">Unused import: &#39;package:showcaseview&#47;showcaseview.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">743:8</span></td>
+<td><div class="message">The declaration &#39;_buildCustomTooltip&#39; isn&#39;t referenced. Try removing the declaration of &#39;_buildCustomTooltip&#39;.</div></td>
+<td><span class="rule-id">unused_element</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="lib\app\modules\notification\views\notification_view.dart">lib\app\modules\notification\views\notification_view.dart</span></td>
+<td><span class="line-col">6:8</span></td>
+<td><div class="message">Unused import: &#39;package:speedlab_pelanggan&#47;app&#47;modules&#47;dashboard&#47;controllers&#47;dashboard_controller.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\bindings\riwayat_booking_binding.dart">lib\app\modules\riwayat_booking\bindings\riwayat_booking_binding.dart</span></td>
+<td><span class="line-col">5:8</span></td>
+<td><div class="message">Unused import: &#39;package:speedlab_pelanggan&#47;app&#47;modules&#47;payment_webview&#47;controllers&#47;payment_webview_controller.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">435:8</span></td>
+<td><div class="message">The declaration &#39;_showBookingDetailModal&#39; isn&#39;t referenced. Try removing the declaration of &#39;_showBookingDetailModal&#39;.</div></td>
+<td><span class="rule-id">unused_element</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="lib\main.dart">lib\main.dart</span></td>
+<td><span class="line-col">12:8</span></td>
+<td><div class="message">Unused import: &#39;package:speedlab_pelanggan&#47;app&#47;data&#47;services&#47;tutorial_service.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="test\edit_profile_view_test.dart">test\edit_profile_view_test.dart</span></td>
+<td><span class="line-col">7:8</span></td>
+<td><div class="message">Unused import: &#39;package:speedlab_pelanggan&#47;app&#47;data&#47;models&#47;user_model.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="test\home_controller_test.dart">test\home_controller_test.dart</span></td>
+<td><span class="line-col">3:8</span></td>
+<td><div class="message">Unused import: &#39;package:get_storage&#47;get_storage.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="test\home_controller_test.dart">test\home_controller_test.dart</span></td>
+<td><span class="line-col">22:8</span></td>
+<td><div class="message">Duplicate import. Try removing all but one import of the library.</div></td>
+<td><span class="rule-id">duplicate_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="test\home_view_test.dart">test\home_view_test.dart</span></td>
+<td><span class="line-col">65:8</span></td>
+<td><div class="message">This method overrides a method annotated as &#39;@mustCallSuper&#39; in &#39;DisposableInterface&#39;, but doesn&#39;t invoke the overridden method.</div></td>
+<td><span class="rule-id">must_call_super</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="test\klaim_garansi_view_test.dart">test\klaim_garansi_view_test.dart</span></td>
+<td><span class="line-col">49:18</span></td>
+<td><div class="message">The method doesn&#39;t override an inherited method. Try updating this class to match the superclass, or removing the override annotation.</div></td>
+<td><span class="rule-id">override_on_non_overriding_member</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="test\klaim_garansi_view_test.dart">test\klaim_garansi_view_test.dart</span></td>
+<td><span class="line-col">86:16</span></td>
+<td><div class="message">The method doesn&#39;t override an inherited method. Try updating this class to match the superclass, or removing the override annotation.</div></td>
+<td><span class="rule-id">override_on_non_overriding_member</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="test\notification_view_test.dart">test\notification_view_test.dart</span></td>
+<td><span class="line-col">1:8</span></td>
+<td><div class="message">Unused import: &#39;dart:io&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="test\notification_view_test.dart">test\notification_view_test.dart</span></td>
+<td><span class="line-col">65:16</span></td>
+<td><div class="message">The method doesn&#39;t override an inherited method. Try updating this class to match the superclass, or removing the override annotation.</div></td>
+<td><span class="rule-id">override_on_non_overriding_member</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="test\register_view_test.dart">test\register_view_test.dart</span></td>
+<td><span class="line-col">4:8</span></td>
+<td><div class="message">Unused import: &#39;package:mockito&#47;mockito.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="MINOR">
+<td><span class="severity-badge severity-MINOR">MINOR</span></td>
+<td><span class="file-path" title="test\riwayat_servis_view_test.dart">test\riwayat_servis_view_test.dart</span></td>
+<td><span class="line-col">1:8</span></td>
+<td><div class="message">Unused import: &#39;dart:io&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unused_import</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\booking\controllers\booking_controller.dart">lib\app\modules\booking\controllers\booking_controller.dart</span></td>
+<td><span class="line-col">87:7</span></td>
+<td><div class="message">Unnecessary assignment of &#39;null&#39;. Try removing the assignment.</div></td>
+<td><span class="rule-id">unnecessary_null_aware_assignments</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\booking\controllers\booking_controller.dart">lib\app\modules\booking\controllers\booking_controller.dart</span></td>
+<td><span class="line-col">418:7</span></td>
+<td><div class="message">Don&#39;t use &#39;BuildContext&#39;s across async gaps. Try rewriting the code to not use the &#39;BuildContext&#39;, or guard the use with a &#39;mounted&#39; check.</div></td>
+<td><span class="rule-id">use_build_context_synchronously</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\booking\views\booking_view.dart">lib\app\modules\booking\views\booking_view.dart</span></td>
+<td><span class="line-col">36:19</span></td>
+<td><div class="message">Statements in an if should be enclosed in a block. Try wrapping the statement in a block.</div></td>
+<td><span class="rule-id">curly_braces_in_flow_control_structures</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\booking\views\booking_view.dart">lib\app\modules\booking\views\booking_view.dart</span></td>
+<td><span class="line-col">518:26</span></td>
+<td><div class="message">Unnecessary use of &#39;toList&#39; in a spread. Try removing the invocation of &#39;toList&#39;.</div></td>
+<td><span class="rule-id">unnecessary_to_list_in_spreads</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\detail_motor\views\detail_motor_view.dart">lib\app\modules\detail_motor\views\detail_motor_view.dart</span></td>
+<td><span class="line-col">58:49</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\detail_motor\views\detail_motor_view.dart">lib\app\modules\detail_motor\views\detail_motor_view.dart</span></td>
+<td><span class="line-col">64:49</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\detail_motor\views\detail_motor_view.dart">lib\app\modules\detail_motor\views\detail_motor_view.dart</span></td>
+<td><span class="line-col">78:57</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\detail_motor\views\detail_motor_view.dart">lib\app\modules\detail_motor\views\detail_motor_view.dart</span></td>
+<td><span class="line-col">151:57</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">74:47</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">133:43</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">214:63</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">232:51</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">363:53</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">404:55</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">424:66</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">436:52</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">615:39</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">620:35</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">631:43</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">701:31</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">703:50</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">715:34</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\home_view.dart">lib\app\modules\home\views\home_view.dart</span></td>
+<td><span class="line-col">756:31</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\service_catalog_widget.dart">lib\app\modules\home\views\service_catalog_widget.dart</span></td>
+<td><span class="line-col">50:41</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\service_catalog_widget.dart">lib\app\modules\home\views\service_catalog_widget.dart</span></td>
+<td><span class="line-col">56:39</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\home\views\service_catalog_widget.dart">lib\app\modules\home\views\service_catalog_widget.dart</span></td>
+<td><span class="line-col">71:45</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\klaim_garansi\controllers\klaim_garansi_controller.dart">lib\app\modules\klaim_garansi\controllers\klaim_garansi_controller.dart</span></td>
+<td><span class="line-col">34:36</span></td>
+<td><div class="message">The type of the right operand (&#39;String?&#39;) isn&#39;t a subtype or a supertype of the left operand (&#39;Map&lt;String, dynamic&gt;?&#39;). Try changing one or both of the operands.</div></td>
+<td><span class="rule-id">unrelated_type_equality_checks</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\klaim_garansi\views\klaim_garansi_view.dart">lib\app\modules\klaim_garansi\views\klaim_garansi_view.dart</span></td>
+<td><span class="line-col">113:44</span></td>
+<td><div class="message">The type of the right operand (&#39;String?&#39;) isn&#39;t a subtype or a supertype of the left operand (&#39;Map&lt;String, dynamic&gt;?&#39;). Try changing one or both of the operands.</div></td>
+<td><span class="rule-id">unrelated_type_equality_checks</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\klaim_garansi\views\klaim_garansi_view.dart">lib\app\modules\klaim_garansi\views\klaim_garansi_view.dart</span></td>
+<td><span class="line-col">121:42</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\klaim_garansi\views\klaim_garansi_view.dart">lib\app\modules\klaim_garansi\views\klaim_garansi_view.dart</span></td>
+<td><span class="line-col">190:54</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\notification\views\notification_view.dart">lib\app\modules\notification\views\notification_view.dart</span></td>
+<td><span class="line-col">97:43</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\notification\views\notification_view.dart">lib\app\modules\notification\views\notification_view.dart</span></td>
+<td><span class="line-col">114:45</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\notification\views\notification_view.dart">lib\app\modules\notification\views\notification_view.dart</span></td>
+<td><span class="line-col">115:44</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\profile\views\profile_view.dart">lib\app\modules\profile\views\profile_view.dart</span></td>
+<td><span class="line-col">59:47</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\profile\views\profile_view.dart">lib\app\modules\profile\views\profile_view.dart</span></td>
+<td><span class="line-col">74:53</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\profile\views\profile_view.dart">lib\app\modules\profile\views\profile_view.dart</span></td>
+<td><span class="line-col">129:47</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\profile\views\profile_view.dart">lib\app\modules\profile\views\profile_view.dart</span></td>
+<td><span class="line-col">193:49</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\profile\views\profile_view.dart">lib\app\modules\profile\views\profile_view.dart</span></td>
+<td><span class="line-col">214:39</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\profile\views\profile_view.dart">lib\app\modules\profile\views\profile_view.dart</span></td>
+<td><span class="line-col">262:33</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\profile\views\profile_view.dart">lib\app\modules\profile\views\profile_view.dart</span></td>
+<td><span class="line-col">283:42</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\controllers\riwayat_booking_controller.dart">lib\app\modules\riwayat_booking\controllers\riwayat_booking_controller.dart</span></td>
+<td><span class="line-col">217:7</span></td>
+<td><div class="message">Don&#39;t invoke &#39;print&#39; in production code. Try using a logging framework.</div></td>
+<td><span class="rule-id">avoid_print</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\controllers\riwayat_booking_controller.dart">lib\app\modules\riwayat_booking\controllers\riwayat_booking_controller.dart</span></td>
+<td><span class="line-col">230:7</span></td>
+<td><div class="message">Don&#39;t invoke &#39;print&#39; in production code. Try using a logging framework.</div></td>
+<td><span class="rule-id">avoid_print</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">147:39</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">219:33</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">224:48</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">252:32</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">254:51</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">312:41</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">408:33</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">669:34</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">670:36</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">675:36</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart">lib\app\modules\riwayat_booking\views\riwayat_booking_view.dart</span></td>
+<td><span class="line-col">676:38</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">104:35</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">145:33</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">150:48</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">174:41</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">240:48</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">243:50</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">322:51</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">361:41</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">410:30</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">411:32</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">416:32</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">417:34</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">452:33</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">457:48</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">469:41</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart">lib\app\modules\riwayat_servis\views\riwayat_servis_view.dart</span></td>
+<td><span class="line-col">510:47</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">122:33</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">182:56</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">185:58</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">250:57</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">253:59</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">282:60</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">283:68</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">348:50</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">349:43</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">384:54</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">385:52</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">449:41</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">454:37</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">466:45</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">472:45</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">541:50</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\service\views\service_view.dart">lib\app\modules\service\views\service_view.dart</span></td>
+<td><span class="line-col">542:48</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\status_klaim_garansi\controllers\status_klaim_garansi_controller.dart">lib\app\modules\status_klaim_garansi\controllers\status_klaim_garansi_controller.dart</span></td>
+<td><span class="line-col">52:7</span></td>
+<td><div class="message">Don&#39;t invoke &#39;print&#39; in production code. Try using a logging framework.</div></td>
+<td><span class="rule-id">avoid_print</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\status_klaim_garansi\controllers\status_klaim_garansi_controller.dart">lib\app\modules\status_klaim_garansi\controllers\status_klaim_garansi_controller.dart</span></td>
+<td><span class="line-col">72:42</span></td>
+<td><div class="message">The type of the right operand (&#39;String?&#39;) isn&#39;t a subtype or a supertype of the left operand (&#39;Map&lt;String, dynamic&gt;?&#39;). Try changing one or both of the operands.</div></td>
+<td><span class="rule-id">unrelated_type_equality_checks</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\status_klaim_garansi\views\status_klaim_garansi_view.dart">lib\app\modules\status_klaim_garansi\views\status_klaim_garansi_view.dart</span></td>
+<td><span class="line-col">108:45</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\status_klaim_garansi\views\status_klaim_garansi_view.dart">lib\app\modules\status_klaim_garansi\views\status_klaim_garansi_view.dart</span></td>
+<td><span class="line-col">114:43</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\modules\status_klaim_garansi\views\status_klaim_garansi_view.dart">lib\app\modules\status_klaim_garansi\views\status_klaim_garansi_view.dart</span></td>
+<td><span class="line-col">140:53</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_pages.dart">lib\app\routes\app_pages.dart</span></td>
+<td><span class="line-col">47:16</span></td>
+<td><div class="message">The constant name &#39;INITIAL&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">6:16</span></td>
+<td><div class="message">The constant name &#39;HOME&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">7:16</span></td>
+<td><div class="message">The constant name &#39;LOGIN&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">8:16</span></td>
+<td><div class="message">The constant name &#39;DASHBOARD&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">9:16</span></td>
+<td><div class="message">The constant name &#39;PROFILE&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">10:16</span></td>
+<td><div class="message">The constant name &#39;REGISTER&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">11:16</span></td>
+<td><div class="message">The constant name &#39;EDIT_PROFILE&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">12:16</span></td>
+<td><div class="message">The constant name &#39;ADD_MOTOR&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">13:16</span></td>
+<td><div class="message">The constant name &#39;BOOKING&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">14:16</span></td>
+<td><div class="message">The constant name &#39;DETAIL_MOTOR&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">15:16</span></td>
+<td><div class="message">The constant name &#39;RIWAYAT_BOOKING&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">16:16</span></td>
+<td><div class="message">The constant name &#39;SERVICE&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">17:16</span></td>
+<td><div class="message">The constant name &#39;EDIT_MOTOR&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">18:16</span></td>
+<td><div class="message">The constant name &#39;PAYMENT_WEBVIEW&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">19:16</span></td>
+<td><div class="message">The constant name &#39;RIWAYAT_SERVIS&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">20:16</span></td>
+<td><div class="message">The constant name &#39;KLAIM_GARANSI&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">21:16</span></td>
+<td><div class="message">The constant name &#39;STATUS_KLAIM_GARANSI&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">22:16</span></td>
+<td><div class="message">The constant name &#39;WELCOME_PAGE&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">23:16</span></td>
+<td><div class="message">The constant name &#39;SPLASH&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">24:16</span></td>
+<td><div class="message">The constant name &#39;NOTIFICATION&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">29:16</span></td>
+<td><div class="message">The constant name &#39;HOME&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">30:16</span></td>
+<td><div class="message">The constant name &#39;LOGIN&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">31:16</span></td>
+<td><div class="message">The constant name &#39;DASHBOARD&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">32:16</span></td>
+<td><div class="message">The constant name &#39;PROFILE&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">33:16</span></td>
+<td><div class="message">The constant name &#39;REGISTER&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">34:16</span></td>
+<td><div class="message">The constant name &#39;EDIT_PROFILE&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">35:16</span></td>
+<td><div class="message">The constant name &#39;ADD_MOTOR&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">36:16</span></td>
+<td><div class="message">The constant name &#39;BOOKING&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">37:16</span></td>
+<td><div class="message">The constant name &#39;DETAIL_MOTOR&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">38:16</span></td>
+<td><div class="message">The constant name &#39;RIWAYAT_BOOKING&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">39:16</span></td>
+<td><div class="message">The constant name &#39;SERVICE&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">40:16</span></td>
+<td><div class="message">The constant name &#39;EDIT_MOTOR&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">41:16</span></td>
+<td><div class="message">The constant name &#39;PAYMENT_WEBVIEW&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">42:16</span></td>
+<td><div class="message">The constant name &#39;RIWAYAT_SERVIS&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">43:16</span></td>
+<td><div class="message">The constant name &#39;KLAIM_GARANSI&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">44:16</span></td>
+<td><div class="message">The constant name &#39;STATUS_KLAIM_GARANSI&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">45:16</span></td>
+<td><div class="message">The constant name &#39;WELCOME_PAGE&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">46:16</span></td>
+<td><div class="message">The constant name &#39;SPLASH&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\routes\app_routes.dart">lib\app\routes\app_routes.dart</span></td>
+<td><span class="line-col">47:16</span></td>
+<td><div class="message">The constant name &#39;NOTIFICATION&#39; isn&#39;t a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.</div></td>
+<td><span class="rule-id">constant_identifier_names</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\utils\widget\custom_button.dart">lib\app\utils\widget\custom_button.dart</span></td>
+<td><span class="line-col">12:9</span></td>
+<td><div class="message">Parameter &#39;key&#39; could be a super parameter. Trying converting &#39;key&#39; to a super parameter.</div></td>
+<td><span class="rule-id">use_super_parameters</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\utils\widget\custom_header.dart">lib\app\utils\widget\custom_header.dart</span></td>
+<td><span class="line-col">33:33</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\utils\widget\custom_header.dart">lib\app\utils\widget\custom_header.dart</span></td>
+<td><span class="line-col">47:50</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\utils\widget\custom_modal.dart">lib\app\utils\widget\custom_modal.dart</span></td>
+<td><span class="line-col">343:44</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\utils\widget\custom_modal.dart">lib\app\utils\widget\custom_modal.dart</span></td>
+<td><span class="line-col">434:37</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\utils\widget\custom_modal.dart">lib\app\utils\widget\custom_modal.dart</span></td>
+<td><span class="line-col">523:40</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\utils\widget\custom_showcase.dart">lib\app\utils\widget\custom_showcase.dart</span></td>
+<td><span class="line-col">28:33</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\utils\widget\custom_textfield.dart">lib\app\utils\widget\custom_textfield.dart</span></td>
+<td><span class="line-col">19:9</span></td>
+<td><div class="message">Parameter &#39;key&#39; could be a super parameter. Trying converting &#39;key&#39; to a super parameter.</div></td>
+<td><span class="rule-id">use_super_parameters</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\utils\widget\info_card.dart">lib\app\utils\widget\info_card.dart</span></td>
+<td><span class="line-col">72:56</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="lib\app\utils\widget\info_card.dart">lib\app\utils\widget\info_card.dart</span></td>
+<td><span class="line-col">129:37</span></td>
+<td><div class="message">&#39;withOpacity&#39; is deprecated and shouldn&#39;t be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.</div></td>
+<td><span class="rule-id">deprecated_member_use</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\add_motor_controller_test.dart">test\add_motor_controller_test.dart</span></td>
+<td><span class="line-col">5:8</span></td>
+<td><div class="message">The import of &#39;package:get&#47;get_connect&#47;http&#47;src&#47;response&#47;response.dart&#39; is unnecessary because all of the used elements are also provided by the import of &#39;package:get&#47;get.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unnecessary_import</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\add_motor_view_test.dart">test\add_motor_view_test.dart</span></td>
+<td><span class="line-col">3:8</span></td>
+<td><div class="message">The import of &#39;package:flutter&#47;services.dart&#39; is unnecessary because all of the used elements are also provided by the import of &#39;package:flutter&#47;material.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unnecessary_import</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\klaim_garansi_view_test.dart">test\klaim_garansi_view_test.dart</span></td>
+<td><span class="line-col">3:8</span></td>
+<td><div class="message">The import of &#39;package:flutter&#47;services.dart&#39; is unnecessary because all of the used elements are also provided by the import of &#39;package:flutter&#47;material.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unnecessary_import</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\login_controller_test.dart">test\login_controller_test.dart</span></td>
+<td><span class="line-col">3:8</span></td>
+<td><div class="message">The import of &#39;package:get&#47;get_instance&#47;src&#47;lifecycle.dart&#39; is unnecessary because all of the used elements are also provided by the import of &#39;package:get&#47;get.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unnecessary_import</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\login_controller_test.dart">test\login_controller_test.dart</span></td>
+<td><span class="line-col">56:7</span></td>
+<td><div class="message">Don&#39;t invoke &#39;print&#39; in production code. Try using a logging framework.</div></td>
+<td><span class="rule-id">avoid_print</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\login_controller_test.dart">test\login_controller_test.dart</span></td>
+<td><span class="line-col">72:7</span></td>
+<td><div class="message">Don&#39;t invoke &#39;print&#39; in production code. Try using a logging framework.</div></td>
+<td><span class="rule-id">avoid_print</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\login_controller_test.dart">test\login_controller_test.dart</span></td>
+<td><span class="line-col">102:7</span></td>
+<td><div class="message">Don&#39;t invoke &#39;print&#39; in production code. Try using a logging framework.</div></td>
+<td><span class="rule-id">avoid_print</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\login_controller_test.dart">test\login_controller_test.dart</span></td>
+<td><span class="line-col">132:7</span></td>
+<td><div class="message">Don&#39;t invoke &#39;print&#39; in production code. Try using a logging framework.</div></td>
+<td><span class="rule-id">avoid_print</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\login_controller_test.dart">test\login_controller_test.dart</span></td>
+<td><span class="line-col">159:7</span></td>
+<td><div class="message">Don&#39;t invoke &#39;print&#39; in production code. Try using a logging framework.</div></td>
+<td><span class="rule-id">avoid_print</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\login_controller_test.dart">test\login_controller_test.dart</span></td>
+<td><span class="line-col">179:7</span></td>
+<td><div class="message">Don&#39;t invoke &#39;print&#39; in production code. Try using a logging framework.</div></td>
+<td><span class="rule-id">avoid_print</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\login_controller_test.dart">test\login_controller_test.dart</span></td>
+<td><span class="line-col">213:7</span></td>
+<td><div class="message">Don&#39;t invoke &#39;print&#39; in production code. Try using a logging framework.</div></td>
+<td><span class="rule-id">avoid_print</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\riwayat_booking_view_test.dart">test\riwayat_booking_view_test.dart</span></td>
+<td><span class="line-col">4:8</span></td>
+<td><div class="message">The import of &#39;package:flutter&#47;services.dart&#39; is unnecessary because all of the used elements are also provided by the import of &#39;package:flutter&#47;material.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unnecessary_import</span></td>
+</tr>
+<tr data-severity="INFO">
+<td><span class="severity-badge severity-INFO">INFO</span></td>
+<td><span class="file-path" title="test\service_view_test.dart">test\service_view_test.dart</span></td>
+<td><span class="line-col">3:8</span></td>
+<td><div class="message">The import of &#39;package:flutter&#47;services.dart&#39; is unnecessary because all of the used elements are also provided by the import of &#39;package:flutter&#47;material.dart&#39;. Try removing the import directive.</div></td>
+<td><span class="rule-id">unnecessary_import</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchBox = document.getElementById('searchBox');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const table = document.getElementById('issuesTable');
+  const rows = table.querySelectorAll('tbody tr');
+  
+  let currentFilter = 'all';
+  
+  // Filter functionality
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      currentFilter = this.dataset.filter;
+      filterRows();
+    });
+  });
+  
+  // Search functionality
+  searchBox.addEventListener('input', filterRows);
+  
+  function filterRows() {
+    const searchTerm = searchBox.value.toLowerCase();
+    
+    rows.forEach(row => {
+      const severity = row.dataset.severity;
+      const text = row.textContent.toLowerCase();
+      
+      const matchesFilter = currentFilter === 'all' || severity === currentFilter;
+      const matchesSearch = searchTerm === '' || text.includes(searchTerm);
+      
+      row.style.display = matchesFilter && matchesSearch ? '' : 'none';
+    });
+    
+    updateVisibleCount();
+  }
+  
+  function updateVisibleCount() {
+    const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+    const totalRows = rows.length;
+    
+    // Update the search box placeholder
+    searchBox.placeholder = `🔍 Search issues... (${visibleRows.length}/${totalRows} shown)`;
+  }
+  
+  // Initialize
+  updateVisibleCount();
+});
+</script>
+
+<div class="footer">
+  <p>Generated by Flutter Statix • <a href="https://pub.dev/packages/flutter_statix" target="_blank">Learn about Flutter Statix</a></p>
+</div>
+</div>
+</body></html>

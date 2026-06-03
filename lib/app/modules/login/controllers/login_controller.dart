@@ -26,7 +26,7 @@ class LoginController extends GetxController {
     isVisible.value = !isVisible.value;
   }
 
-  void login() async {
+  Future<void> login() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       CustomSnackbar.error("Opps", "Email Dan Password harus diisi");
       return;
@@ -51,7 +51,6 @@ class LoginController extends GetxController {
             "Selamat Datang ${loginres.user?.name ?? 'User'}",
           );
 
-          // PISAHKAN TRY-CATCH UNTUK FCM
           try {
             String? fcmToken = await FirebaseMessaging.instance.getToken();
             if (fcmToken != null) {
@@ -62,12 +61,14 @@ class LoginController extends GetxController {
             }
           } catch (fcmError) {
             debugPrint("⚠️ Peringatan: Gagal mendapatkan token FCM: $fcmError");
-            // Error FCM diabaikan agar tidak mengganggu flow login utama
           }
 
           // Navigasi tetap berjalan meskipun FCM gagal
           Get.offAllNamed('/dashboard', arguments: loginres.user);
           debugPrint('Login successful, token: ${loginres.token}');
+        } else {
+          debugPrint("Login gagal: Token null dalam response");
+          CustomSnackbar.error("Error", "Gagal Login, Token tidak ditemukan");
         }
       } else {
         String messsage =
@@ -83,7 +84,7 @@ class LoginController extends GetxController {
     }
   }
 
-  void loginWithGoogle() async {
+  Future<void> loginWithGoogle() async {
     try {
       isLoading.value = true;
       await _googleSignIn.signOut();

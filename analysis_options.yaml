@@ -26,3 +26,11 @@ linter:
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+dcm:
+  extends:
+    - metrics-recommended
+  metrics:
+    cyclomatic-complexity:
+      threshold: 20
+    source-lines-of-code:
+      threshold: 80

@@ -19,7 +19,7 @@ class BookingsProvider extends ApiService {
   }
 
   Future<Response> cancelBooking(String id) async {
-    return await patch('api/bookings/$id/cancel', {});
+    return await post('api/bookings/$id/cancel', {"action": "cancel"});
   }
 
   /// Fetch bookings untuk tanggal tertentu untuk mengecek slot mana yang sudah terisi

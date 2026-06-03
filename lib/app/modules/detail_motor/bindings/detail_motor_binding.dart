@@ -11,7 +11,6 @@ class DetailMotorBinding extends Bindings {
     Get.put(MotorcyclesProvider());
     Get.lazyPut<DetailMotorController>(
       () => DetailMotorController(
-        bookingsProvider: Get.find<BookingsProvider>(),
         motorcyclesProvider: Get.find<MotorcyclesProvider>(),
       ),
     );

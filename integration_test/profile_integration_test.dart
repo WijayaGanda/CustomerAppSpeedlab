@@ -48,7 +48,7 @@ class MockAuthService extends GetxService implements AuthService {
 
 // ==================== MOCK CONTROLLER BYPASS ====================
 class MockProfileController extends ProfileController {
-  MockProfileController() : super(provider: MockProfileProvider());
+  MockProfileController() : super(provider: MockProfileProvider(), authservice: MockAuthService());
 
   // 🔥 BYPASS LOGOUT FIREBASE AGAR TIDAK CRASH DI FLUTTER TEST
   @override

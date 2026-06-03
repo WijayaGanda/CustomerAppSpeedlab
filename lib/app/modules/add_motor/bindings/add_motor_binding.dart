@@ -6,7 +6,7 @@ import '../controllers/add_motor_controller.dart';
 class AddMotorBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AddMotorController>(() => AddMotorController());
+    Get.lazyPut<AddMotorController>(() => AddMotorController(provider: Get.find<MotorcyclesProvider>()));
     Get.lazyPut<MotorcyclesProvider>(() => MotorcyclesProvider());
   }
 }

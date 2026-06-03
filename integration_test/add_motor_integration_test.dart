@@ -46,7 +46,9 @@ void main() {
 
       // 2. Barulah panggil Controller-nya.
       // Saat memanggil Get.find(), dia akan otomatis mengambil Mock di atas!
-      Get.put<AddMotorController>(AddMotorController());
+      Get.put<AddMotorController>(
+        AddMotorController(provider: Get.find<MotorcyclesProvider>()),
+      );
     });
 
     tearDown(() async {

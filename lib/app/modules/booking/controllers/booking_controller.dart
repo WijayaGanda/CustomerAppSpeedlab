@@ -248,10 +248,6 @@ class BookingController extends GetxController {
           title: "Informasi",
           message: response.body?['message'] ?? 'Gagal membuat booking',
         );
-        // CustomSnackbar.error(
-        //   "Error",
-        //   response.body?['message'] ?? 'Gagal membuat booking',
-        // );
       }
     } catch (e) {
       debugPrint("❌ Error during booking: $e");

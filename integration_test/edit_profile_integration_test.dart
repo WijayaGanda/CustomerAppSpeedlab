@@ -86,7 +86,12 @@ void main() {
       Get.routing.args = _DummyUser();
 
       // 3. Daftarkan EditProfileController Utama
-      Get.put<EditProfileController>(EditProfileController());
+      Get.put<EditProfileController>(
+        EditProfileController(
+          provider: Get.find<ProfileProvider>(),
+          authService: Get.find<AuthService>(),
+        ),
+      );
     });
 
     tearDown(() async {

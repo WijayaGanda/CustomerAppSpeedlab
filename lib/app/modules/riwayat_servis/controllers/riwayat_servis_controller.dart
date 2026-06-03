@@ -41,8 +41,6 @@ class RiwayatServisController extends GetxController {
           title: 'Riwayat Servis Ditemukan',
           message: 'Riwayat servis berhasil ditemukan untuk booking ini.',
         );
-      } else if (serviceHistory.first.status?.toLowerCase() == 'selesai') {
-        // disableForm();
       } else {
         CustomModal.showErrorDialog(
           title: 'Riwayat Servis Kosong',

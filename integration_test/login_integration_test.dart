@@ -121,13 +121,9 @@ void main() {
       final loginButton = find.text('Masuk');
       expect(loginButton, findsOneWidget);
 
-      // Note: Actual login will fail without real backend
-      // This test verifies the UI flow and button interaction
       await tester.tap(loginButton);
       await tester.pumpAndSettle();
 
-      // In a real scenario, you would verify navigation to dashboard
-      // For this test, we verify the login button was tappable
     });
 
     testWidgets('Login flow with empty credentials shows error', (

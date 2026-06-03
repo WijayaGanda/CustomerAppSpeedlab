@@ -1,0 +1,2524 @@
+{
+  "issues": [
+    {
+      "engineId": "dart",
+      "ruleId": "invalid_override",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'MockLoginController.login' ('void Function()') isn't a valid override of 'LoginController.login' ('Future<void> Function()').",
+        "filePath": "test\\login_view_test.dart",
+        "textRange": {
+          "startLine": 24,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "invalid_override",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'MockLoginController.loginWithGoogle' ('void Function()') isn't a valid override of 'LoginController.loginWithGoogle' ('Future<void> Function()').",
+        "filePath": "test\\login_view_test.dart",
+        "textRange": {
+          "startLine": 29,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "invalid_constant",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Invalid constant value.",
+        "filePath": "test\\widget_test.dart",
+        "textRange": {
+          "startLine": 16,
+          "startColumn": 54
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "undefined_function",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The function 'MockAuthService' isn't defined. Try importing the library that defines 'MockAuthService', correcting the name to the name of an existing function, or defining a function named 'MockAuthService'.",
+        "filePath": "test\\widget_test.dart",
+        "textRange": {
+          "startLine": 16,
+          "startColumn": 54
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'package:intl/intl.dart'. Try removing the import directive.",
+        "filePath": "integration_test\\booking_integration_test.dart",
+        "textRange": {
+          "startLine": 6,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'package:speedlab_pelanggan/app/data/models/service_model.dart'. Try removing the import directive.",
+        "filePath": "integration_test\\booking_integration_test.dart",
+        "textRange": {
+          "startLine": 15,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "must_call_super",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "This method overrides a method annotated as '@mustCallSuper' in 'DisposableInterface', but doesn't invoke the overridden method.",
+        "filePath": "integration_test\\booking_integration_test.dart",
+        "textRange": {
+          "startLine": 87,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "must_call_super",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "This method overrides a method annotated as '@mustCallSuper' in 'DisposableInterface', but doesn't invoke the overridden method.",
+        "filePath": "integration_test\\home_integration_test.dart",
+        "textRange": {
+          "startLine": 71,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "must_call_super",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "This method overrides a method annotated as '@mustCallSuper' in 'DisposableInterface', but doesn't invoke the overridden method.",
+        "filePath": "integration_test\\home_integration_test.dart",
+        "textRange": {
+          "startLine": 83,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'package:speedlab_pelanggan/app/data/models/user_model.dart'. Try removing the import directive.",
+        "filePath": "integration_test\\profile_integration_test.dart",
+        "textRange": {
+          "startLine": 11,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_local_variable",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The value of the local variable 'isBooked' isn't used. Try removing the variable or using it.",
+        "filePath": "lib\\app\\modules\\booking\\controllers\\booking_controller.dart",
+        "textRange": {
+          "startLine": 466,
+          "startColumn": 39
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'package:showcaseview/showcaseview.dart'. Try removing the import directive.",
+        "filePath": "lib\\app\\modules\\home\\controllers\\home_controller.dart",
+        "textRange": {
+          "startLine": 3,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_element",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The declaration '_buildCustomTooltip' isn't referenced. Try removing the declaration of '_buildCustomTooltip'.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 743,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'package:speedlab_pelanggan/app/modules/dashboard/controllers/dashboard_controller.dart'. Try removing the import directive.",
+        "filePath": "lib\\app\\modules\\notification\\views\\notification_view.dart",
+        "textRange": {
+          "startLine": 6,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'package:speedlab_pelanggan/app/modules/payment_webview/controllers/payment_webview_controller.dart'. Try removing the import directive.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\bindings\\riwayat_booking_binding.dart",
+        "textRange": {
+          "startLine": 5,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_element",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The declaration '_showBookingDetailModal' isn't referenced. Try removing the declaration of '_showBookingDetailModal'.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 435,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'package:speedlab_pelanggan/app/data/services/tutorial_service.dart'. Try removing the import directive.",
+        "filePath": "lib\\main.dart",
+        "textRange": {
+          "startLine": 12,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'package:speedlab_pelanggan/app/data/models/user_model.dart'. Try removing the import directive.",
+        "filePath": "test\\edit_profile_view_test.dart",
+        "textRange": {
+          "startLine": 7,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'package:get_storage/get_storage.dart'. Try removing the import directive.",
+        "filePath": "test\\home_controller_test.dart",
+        "textRange": {
+          "startLine": 3,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "duplicate_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Duplicate import. Try removing all but one import of the library.",
+        "filePath": "test\\home_controller_test.dart",
+        "textRange": {
+          "startLine": 22,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "must_call_super",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "This method overrides a method annotated as '@mustCallSuper' in 'DisposableInterface', but doesn't invoke the overridden method.",
+        "filePath": "test\\home_view_test.dart",
+        "textRange": {
+          "startLine": 65,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "override_on_non_overriding_member",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The method doesn't override an inherited method. Try updating this class to match the superclass, or removing the override annotation.",
+        "filePath": "test\\klaim_garansi_view_test.dart",
+        "textRange": {
+          "startLine": 49,
+          "startColumn": 18
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "override_on_non_overriding_member",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The method doesn't override an inherited method. Try updating this class to match the superclass, or removing the override annotation.",
+        "filePath": "test\\klaim_garansi_view_test.dart",
+        "textRange": {
+          "startLine": 86,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'dart:io'. Try removing the import directive.",
+        "filePath": "test\\notification_view_test.dart",
+        "textRange": {
+          "startLine": 1,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "override_on_non_overriding_member",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The method doesn't override an inherited method. Try updating this class to match the superclass, or removing the override annotation.",
+        "filePath": "test\\notification_view_test.dart",
+        "textRange": {
+          "startLine": 65,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'package:mockito/mockito.dart'. Try removing the import directive.",
+        "filePath": "test\\register_view_test.dart",
+        "textRange": {
+          "startLine": 4,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unused_import",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unused import: 'dart:io'. Try removing the import directive.",
+        "filePath": "test\\riwayat_servis_view_test.dart",
+        "textRange": {
+          "startLine": 1,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unnecessary_null_aware_assignments",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unnecessary assignment of 'null'. Try removing the assignment.",
+        "filePath": "lib\\app\\modules\\booking\\controllers\\booking_controller.dart",
+        "textRange": {
+          "startLine": 87,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "use_build_context_synchronously",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check.",
+        "filePath": "lib\\app\\modules\\booking\\controllers\\booking_controller.dart",
+        "textRange": {
+          "startLine": 418,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "curly_braces_in_flow_control_structures",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Statements in an if should be enclosed in a block. Try wrapping the statement in a block.",
+        "filePath": "lib\\app\\modules\\booking\\views\\booking_view.dart",
+        "textRange": {
+          "startLine": 36,
+          "startColumn": 19
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unnecessary_to_list_in_spreads",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Unnecessary use of 'toList' in a spread. Try removing the invocation of 'toList'.",
+        "filePath": "lib\\app\\modules\\booking\\views\\booking_view.dart",
+        "textRange": {
+          "startLine": 518,
+          "startColumn": 26
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\detail_motor\\views\\detail_motor_view.dart",
+        "textRange": {
+          "startLine": 58,
+          "startColumn": 49
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\detail_motor\\views\\detail_motor_view.dart",
+        "textRange": {
+          "startLine": 64,
+          "startColumn": 49
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\detail_motor\\views\\detail_motor_view.dart",
+        "textRange": {
+          "startLine": 78,
+          "startColumn": 57
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\detail_motor\\views\\detail_motor_view.dart",
+        "textRange": {
+          "startLine": 151,
+          "startColumn": 57
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 74,
+          "startColumn": 47
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 133,
+          "startColumn": 43
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 214,
+          "startColumn": 63
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 232,
+          "startColumn": 51
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 363,
+          "startColumn": 53
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 404,
+          "startColumn": 55
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 424,
+          "startColumn": 66
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 436,
+          "startColumn": 52
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 615,
+          "startColumn": 39
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 620,
+          "startColumn": 35
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 631,
+          "startColumn": 43
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 701,
+          "startColumn": 31
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 703,
+          "startColumn": 50
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 715,
+          "startColumn": 34
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\home_view.dart",
+        "textRange": {
+          "startLine": 756,
+          "startColumn": 31
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\service_catalog_widget.dart",
+        "textRange": {
+          "startLine": 50,
+          "startColumn": 41
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\service_catalog_widget.dart",
+        "textRange": {
+          "startLine": 56,
+          "startColumn": 39
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\home\\views\\service_catalog_widget.dart",
+        "textRange": {
+          "startLine": 71,
+          "startColumn": 45
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unrelated_type_equality_checks",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The type of the right operand ('String?') isn't a subtype or a supertype of the left operand ('Map<String, dynamic>?'). Try changing one or both of the operands.",
+        "filePath": "lib\\app\\modules\\klaim_garansi\\controllers\\klaim_garansi_controller.dart",
+        "textRange": {
+          "startLine": 34,
+          "startColumn": 36
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unrelated_type_equality_checks",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The type of the right operand ('String?') isn't a subtype or a supertype of the left operand ('Map<String, dynamic>?'). Try changing one or both of the operands.",
+        "filePath": "lib\\app\\modules\\klaim_garansi\\views\\klaim_garansi_view.dart",
+        "textRange": {
+          "startLine": 113,
+          "startColumn": 44
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\klaim_garansi\\views\\klaim_garansi_view.dart",
+        "textRange": {
+          "startLine": 121,
+          "startColumn": 42
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\klaim_garansi\\views\\klaim_garansi_view.dart",
+        "textRange": {
+          "startLine": 190,
+          "startColumn": 54
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\notification\\views\\notification_view.dart",
+        "textRange": {
+          "startLine": 97,
+          "startColumn": 43
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\notification\\views\\notification_view.dart",
+        "textRange": {
+          "startLine": 114,
+          "startColumn": 45
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\notification\\views\\notification_view.dart",
+        "textRange": {
+          "startLine": 115,
+          "startColumn": 44
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\profile\\views\\profile_view.dart",
+        "textRange": {
+          "startLine": 59,
+          "startColumn": 47
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\profile\\views\\profile_view.dart",
+        "textRange": {
+          "startLine": 74,
+          "startColumn": 53
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\profile\\views\\profile_view.dart",
+        "textRange": {
+          "startLine": 129,
+          "startColumn": 47
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\profile\\views\\profile_view.dart",
+        "textRange": {
+          "startLine": 193,
+          "startColumn": 49
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\profile\\views\\profile_view.dart",
+        "textRange": {
+          "startLine": 214,
+          "startColumn": 39
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\profile\\views\\profile_view.dart",
+        "textRange": {
+          "startLine": 262,
+          "startColumn": 33
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\profile\\views\\profile_view.dart",
+        "textRange": {
+          "startLine": 283,
+          "startColumn": 42
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "avoid_print",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Don't invoke 'print' in production code. Try using a logging framework.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\controllers\\riwayat_booking_controller.dart",
+        "textRange": {
+          "startLine": 217,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "avoid_print",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Don't invoke 'print' in production code. Try using a logging framework.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\controllers\\riwayat_booking_controller.dart",
+        "textRange": {
+          "startLine": 230,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 147,
+          "startColumn": 39
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 219,
+          "startColumn": 33
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 224,
+          "startColumn": 48
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 252,
+          "startColumn": 32
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 254,
+          "startColumn": 51
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 312,
+          "startColumn": 41
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 408,
+          "startColumn": 33
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 669,
+          "startColumn": 34
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 670,
+          "startColumn": 36
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 675,
+          "startColumn": 36
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_booking\\views\\riwayat_booking_view.dart",
+        "textRange": {
+          "startLine": 676,
+          "startColumn": 38
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 104,
+          "startColumn": 35
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 145,
+          "startColumn": 33
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 150,
+          "startColumn": 48
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 174,
+          "startColumn": 41
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 240,
+          "startColumn": 48
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 243,
+          "startColumn": 50
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 322,
+          "startColumn": 51
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 361,
+          "startColumn": 41
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 410,
+          "startColumn": 30
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 411,
+          "startColumn": 32
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 416,
+          "startColumn": 32
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 417,
+          "startColumn": 34
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 452,
+          "startColumn": 33
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 457,
+          "startColumn": 48
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 469,
+          "startColumn": 41
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\riwayat_servis\\views\\riwayat_servis_view.dart",
+        "textRange": {
+          "startLine": 510,
+          "startColumn": 47
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 122,
+          "startColumn": 33
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 182,
+          "startColumn": 56
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 185,
+          "startColumn": 58
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 250,
+          "startColumn": 57
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 253,
+          "startColumn": 59
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 282,
+          "startColumn": 60
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 283,
+          "startColumn": 68
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 348,
+          "startColumn": 50
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 349,
+          "startColumn": 43
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 384,
+          "startColumn": 54
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 385,
+          "startColumn": 52
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 449,
+          "startColumn": 41
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 454,
+          "startColumn": 37
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 466,
+          "startColumn": 45
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 472,
+          "startColumn": 45
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 541,
+          "startColumn": 50
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\service\\views\\service_view.dart",
+        "textRange": {
+          "startLine": 542,
+          "startColumn": 48
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "avoid_print",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Don't invoke 'print' in production code. Try using a logging framework.",
+        "filePath": "lib\\app\\modules\\status_klaim_garansi\\controllers\\status_klaim_garansi_controller.dart",
+        "textRange": {
+          "startLine": 52,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unrelated_type_equality_checks",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The type of the right operand ('String?') isn't a subtype or a supertype of the left operand ('Map<String, dynamic>?'). Try changing one or both of the operands.",
+        "filePath": "lib\\app\\modules\\status_klaim_garansi\\controllers\\status_klaim_garansi_controller.dart",
+        "textRange": {
+          "startLine": 72,
+          "startColumn": 42
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\status_klaim_garansi\\views\\status_klaim_garansi_view.dart",
+        "textRange": {
+          "startLine": 108,
+          "startColumn": 45
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\status_klaim_garansi\\views\\status_klaim_garansi_view.dart",
+        "textRange": {
+          "startLine": 114,
+          "startColumn": 43
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\modules\\status_klaim_garansi\\views\\status_klaim_garansi_view.dart",
+        "textRange": {
+          "startLine": 140,
+          "startColumn": 53
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'INITIAL' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_pages.dart",
+        "textRange": {
+          "startLine": 47,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'HOME' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 6,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'LOGIN' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 7,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'DASHBOARD' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 8,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'PROFILE' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 9,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'REGISTER' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 10,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'EDIT_PROFILE' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 11,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'ADD_MOTOR' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 12,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'BOOKING' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 13,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'DETAIL_MOTOR' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 14,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'RIWAYAT_BOOKING' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 15,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'SERVICE' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 16,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'EDIT_MOTOR' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 17,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'PAYMENT_WEBVIEW' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 18,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'RIWAYAT_SERVIS' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 19,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'KLAIM_GARANSI' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 20,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'STATUS_KLAIM_GARANSI' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 21,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'WELCOME_PAGE' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 22,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'SPLASH' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 23,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'NOTIFICATION' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 24,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'HOME' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 29,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'LOGIN' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 30,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'DASHBOARD' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 31,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'PROFILE' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 32,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'REGISTER' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 33,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'EDIT_PROFILE' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 34,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'ADD_MOTOR' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 35,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'BOOKING' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 36,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'DETAIL_MOTOR' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 37,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'RIWAYAT_BOOKING' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 38,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'SERVICE' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 39,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'EDIT_MOTOR' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 40,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'PAYMENT_WEBVIEW' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 41,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'RIWAYAT_SERVIS' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 42,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'KLAIM_GARANSI' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 43,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'STATUS_KLAIM_GARANSI' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 44,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'WELCOME_PAGE' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 45,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'SPLASH' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 46,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "constant_identifier_names",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The constant name 'NOTIFICATION' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style.",
+        "filePath": "lib\\app\\routes\\app_routes.dart",
+        "textRange": {
+          "startLine": 47,
+          "startColumn": 16
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "use_super_parameters",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Parameter 'key' could be a super parameter. Trying converting 'key' to a super parameter.",
+        "filePath": "lib\\app\\utils\\widget\\custom_button.dart",
+        "textRange": {
+          "startLine": 12,
+          "startColumn": 9
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\utils\\widget\\custom_header.dart",
+        "textRange": {
+          "startLine": 33,
+          "startColumn": 33
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\utils\\widget\\custom_header.dart",
+        "textRange": {
+          "startLine": 47,
+          "startColumn": 50
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\utils\\widget\\custom_modal.dart",
+        "textRange": {
+          "startLine": 343,
+          "startColumn": 44
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\utils\\widget\\custom_modal.dart",
+        "textRange": {
+          "startLine": 434,
+          "startColumn": 37
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\utils\\widget\\custom_modal.dart",
+        "textRange": {
+          "startLine": 523,
+          "startColumn": 40
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\utils\\widget\\custom_showcase.dart",
+        "textRange": {
+          "startLine": 28,
+          "startColumn": 33
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "use_super_parameters",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Parameter 'key' could be a super parameter. Trying converting 'key' to a super parameter.",
+        "filePath": "lib\\app\\utils\\widget\\custom_textfield.dart",
+        "textRange": {
+          "startLine": 19,
+          "startColumn": 9
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\utils\\widget\\info_card.dart",
+        "textRange": {
+          "startLine": 72,
+          "startColumn": 56
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "deprecated_member_use",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement.",
+        "filePath": "lib\\app\\utils\\widget\\info_card.dart",
+        "textRange": {
+          "startLine": 129,
+          "startColumn": 37
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unnecessary_import",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The import of 'package:get/get_connect/http/src/response/response.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart'. Try removing the import directive.",
+        "filePath": "test\\add_motor_controller_test.dart",
+        "textRange": {
+          "startLine": 5,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unnecessary_import",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive.",
+        "filePath": "test\\add_motor_view_test.dart",
+        "textRange": {
+          "startLine": 3,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unnecessary_import",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive.",
+        "filePath": "test\\klaim_garansi_view_test.dart",
+        "textRange": {
+          "startLine": 3,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unnecessary_import",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The import of 'package:get/get_instance/src/lifecycle.dart' is unnecessary because all of the used elements are also provided by the import of 'package:get/get.dart'. Try removing the import directive.",
+        "filePath": "test\\login_controller_test.dart",
+        "textRange": {
+          "startLine": 3,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "avoid_print",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Don't invoke 'print' in production code. Try using a logging framework.",
+        "filePath": "test\\login_controller_test.dart",
+        "textRange": {
+          "startLine": 56,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "avoid_print",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Don't invoke 'print' in production code. Try using a logging framework.",
+        "filePath": "test\\login_controller_test.dart",
+        "textRange": {
+          "startLine": 72,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "avoid_print",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Don't invoke 'print' in production code. Try using a logging framework.",
+        "filePath": "test\\login_controller_test.dart",
+        "textRange": {
+          "startLine": 102,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "avoid_print",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Don't invoke 'print' in production code. Try using a logging framework.",
+        "filePath": "test\\login_controller_test.dart",
+        "textRange": {
+          "startLine": 132,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "avoid_print",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Don't invoke 'print' in production code. Try using a logging framework.",
+        "filePath": "test\\login_controller_test.dart",
+        "textRange": {
+          "startLine": 159,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "avoid_print",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Don't invoke 'print' in production code. Try using a logging framework.",
+        "filePath": "test\\login_controller_test.dart",
+        "textRange": {
+          "startLine": 179,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "avoid_print",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "Don't invoke 'print' in production code. Try using a logging framework.",
+        "filePath": "test\\login_controller_test.dart",
+        "textRange": {
+          "startLine": 213,
+          "startColumn": 7
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unnecessary_import",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive.",
+        "filePath": "test\\riwayat_booking_view_test.dart",
+        "textRange": {
+          "startLine": 4,
+          "startColumn": 8
+        }
+      }
+    },
+    {
+      "engineId": "dart",
+      "ruleId": "unnecessary_import",
+      "severity": "INFO",
+      "type": "CODE_SMELL",
+      "primaryLocation": {
+        "message": "The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive.",
+        "filePath": "test\\service_view_test.dart",
+        "textRange": {
+          "startLine": 3,
+          "startColumn": 8
+        }
+      }
+    }
+  ]
+}

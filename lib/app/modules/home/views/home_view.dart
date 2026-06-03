@@ -387,10 +387,7 @@ class HomeView extends GetView<HomeController> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        itemCount:
-                            displayMotors.length >= 2
-                                ? 2
-                                : displayMotors.length,
+                        itemCount: displayMotors.length,
                         separatorBuilder:
                             (context, index) => const SizedBox(height: 16),
                         itemBuilder: (context, index) {

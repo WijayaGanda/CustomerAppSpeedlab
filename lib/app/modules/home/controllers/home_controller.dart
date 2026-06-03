@@ -48,44 +48,7 @@ class HomeController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-    // Future.delayed(const Duration(milliseconds: 1000), () {
-    //   // 6. Cek status tutorial LOKAL untuk halaman Home saja
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     String? userId = authService.user.value?.id.toString();
-    //     String tutorialKey =
-    //         userId != null ? 'is_first_home_$userId' : 'is_first_home';
-
-    //     bool isFirstTime = box.read(tutorialKey) ?? true;
-
-    //     if (isFirstTime) {
-    //       // Tembak showcase-nya
-    //       ShowcaseView.getNamed('tutorial_home').startShowCase([
-    //         keyProfile,
-    //         keyTambahMotor,
-    //         keyLayanan,
-    //         keyRefresh,
-    //         keyKendaraan,
-    //       ]);
-
-    //       // Simpan status bahwa user ini sudah melihatnya
-    //       box.write(tutorialKey, false);
-    //     }
-    //   });
-    // });
   }
-
-  // @override
-  // void onReady() {
-  //   super.onReady();
-
-  //   // 3. Panggil pengecekan memori dari TutorialService
-  //   if (Get.find<TutorialService>().shouldShowTutorial('is_first_home_view')) {
-  //     // 4. Jalankan Showcase menggunakan getNamed sesuai scope yang didaftarkan
-  //     ShowcaseView.getNamed(
-  //       'tutorial_home',
-  //     ).startShowCase([keyProfile, keyTambahMotor, keyLayanan, keyRefresh, keyKendaraan]);
-  //   }
-  // }
 
   Future<void> fetchMyMotors({int retryCount = 0}) async {
     try {
@@ -96,7 +59,6 @@ class HomeController extends GetxController {
       debugPrint('📡 Response status: ${response.statusCode}');
       debugPrint('📦 Response body: ${response.body}');
 
-      // Jika response null (koneksi belum siap), retry
       if (response.statusCode == null && retryCount < 3) {
         debugPrint(
           '⚠️ Connection not ready, retrying in ${500 * (retryCount + 1)}ms...',
@@ -124,7 +86,6 @@ class HomeController extends GetxController {
         );
       }
     } catch (e, stackTrace) {
-      // Retry jika exception dan belum 3x
       if (retryCount < 3) {
         debugPrint('⚠️ Exception, retrying... Error: $e');
         await Future.delayed(Duration(milliseconds: 500 * (retryCount + 1)));

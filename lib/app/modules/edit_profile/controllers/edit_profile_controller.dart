@@ -7,8 +7,10 @@ import 'package:speedlab_pelanggan/app/modules/profile/controllers/profile_contr
 import 'package:speedlab_pelanggan/app/utils/widget/custom_snackbar.dart';
 
 class EditProfileController extends GetxController {
-  final provider = Get.find<ProfileProvider>();
-  final authService = Get.find<AuthService>();
+  final ProfileProvider provider;
+  final AuthService authService;
+
+  EditProfileController({required this.provider, required this.authService});
 
   late TextEditingController nameCtrl;
   late TextEditingController emailCtrl;
@@ -20,10 +22,13 @@ class EditProfileController extends GetxController {
   void onInit() {
     super.onInit();
     final user = Get.arguments;
-    nameCtrl = TextEditingController(text: user.name ?? '');
-    emailCtrl = TextEditingController(text: user.email ?? '');
-    phoneCtrl = TextEditingController(text: user.phone ?? '');
-    addressCtrl = TextEditingController(text: user.address ?? '');
+    nameCtrl = TextEditingController(text: user?.name ?? '');
+
+    emailCtrl = TextEditingController(text: user?.email ?? '');
+
+    phoneCtrl = TextEditingController(text: user?.phone ?? '');
+
+    addressCtrl = TextEditingController(text: user?.address ?? '');
   }
 
   Future<void> updateProfile() async {
@@ -61,6 +66,8 @@ class EditProfileController extends GetxController {
           response.body['message'] ?? "Gagal memperbarui profil",
         );
       }
+    } catch (e) {
+      CustomSnackbar.error("Error", "Terjadi kesalahan");
     } finally {
       isLoading.value = false;
     }

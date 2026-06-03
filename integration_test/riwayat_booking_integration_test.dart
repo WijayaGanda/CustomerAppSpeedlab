@@ -135,6 +135,7 @@ class MockRiwayatBookingController extends RiwayatBookingController {
         provider: MockBookingsProvider(),
         paymentProvider: MockPaymentProvider(),
         serviceHistoryProvider: MockServiceHistoryProvider(),
+        authService: MockAuthService(),
       );
 
   @override
@@ -202,7 +203,7 @@ void main() {
         expect(find.text('Riwayat Booking'), findsOneWidget);
         expect(find.byType(TabBar), findsOneWidget);
 
-        // 🔥 PERBAIKAN: Gunakan textContaining karena teks digabung dengan string label lain
+        
         expect(find.textContaining('book1111'), findsOneWidget);
         expect(find.textContaining('B 1234 XYZ'), findsWidgets);
       },
@@ -221,14 +222,14 @@ void main() {
       expect(find.textContaining('book2222'), findsOneWidget);
       expect(find.textContaining('L 5678 JKL'), findsWidgets);
 
-      // 🔥 PERBAIKAN: Geser TabBar agar tab 'Selesai' yang tersembunyi bergeser masuk ke layar
+      
       final tabBar = find.byType(TabBar);
       if (tabBar.evaluate().isNotEmpty) {
         await tester.drag(tabBar.first, const Offset(-300, 0));
         await tester.pumpAndSettle();
       }
 
-      // Sekarang ketuk aman karena widget sudah terlihat di layar
+      
       final selesaiTab = find.text('Selesai');
       await tester.tap(selesaiTab);
       await tester.pumpAndSettle(const Duration(milliseconds: 500));

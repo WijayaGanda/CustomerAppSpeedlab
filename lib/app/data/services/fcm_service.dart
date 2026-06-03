@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart'; // ⬅️ IMPORT WAJIB UNTUK kIsWeb
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:speedlab_pelanggan/app/data/providers/notif_provider.dart';
@@ -14,11 +15,17 @@ class FCMService extends GetxService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final NotifProvider _notifProvider = Get.put(NotifProvider());
 
-  // final dashC = Get.find<DashboardController>();
-
   Future<FCMService> init() async {
+    // 🔥 PERBAIKAN: Hentikan eksekusi FCM jika dijalankan di Web agar tidak blank putih!
+    if (kIsWeb) {
+      debugPrint(
+        "🌐 Berjalan di Web: Layanan FCM dinonaktifkan sementara untuk UAT.",
+      );
+      return this;
+    }
+
     // Pastikan firebase sudah siap (aman kalau dipanggil lagi)
-    await Firebase.initializeApp();
+    // await Firebase.initializeApp();
 
     // 1) Permission
     final settings = await _messaging.requestPermission(
@@ -48,7 +55,10 @@ class FCMService extends GetxService {
           margin: const EdgeInsets.all(15),
           snackPosition: SnackPosition.TOP,
         );
-        await Get.find<NotificationController>().fetchNotifications();
+
+        if (Get.isRegistered<NotificationController>()) {
+          await Get.find<NotificationController>().fetchNotifications();
+        }
       }
     });
 
@@ -95,7 +105,6 @@ class FCMService extends GetxService {
     debugPrint("🔔 Notification tapped. type=$type relatedId=$relatedId");
 
     if (type == 'booking' && relatedId != null) {
-      // Contoh:
       Future.delayed(const Duration(milliseconds: 500), () {
         if (Get.isRegistered<DashboardController>()) {
           Get.find<DashboardController>().changePage(2);
@@ -111,6 +120,9 @@ class FCMService extends GetxService {
   }
 
   Future<void> sendFcmTokenToBackend(String fcmToken) async {
+    // 🔥 PERBAIKAN: Cegah penggunaan dart:io jika dieksekusi di web
+    if (kIsWeb) return;
+
     try {
       final deviceInfo = DeviceInfoPlugin();
       String deviceName = 'Unknown Device';
@@ -138,7 +150,6 @@ class FCMService extends GetxService {
         debugPrint("✅ Token FCM tersimpan di backend");
       } else {
         debugPrint("❌ Gagal simpan token. Status: ${response.statusCode}");
-        debugPrint("❌ Body: ${response.body}");
       }
     } catch (e) {
       debugPrint("❌ Error kirim token ke backend: $e");
@@ -146,6 +157,8 @@ class FCMService extends GetxService {
   }
 
   Future<void> unregisterFcmToken(String fcmToken) async {
+    if (kIsWeb) return;
+
     try {
       final response = await _notifProvider.unregisterFcmToken({
         'fcmToken': fcmToken,
@@ -153,9 +166,6 @@ class FCMService extends GetxService {
       debugPrint("🔔 Unregistering FCM Token: $fcmToken");
       if (response.statusCode == 200) {
         debugPrint("✅ Token FCM berhasil dihapus dari backend");
-      } else {
-        debugPrint("❌ Gagal hapus token. Status: ${response.statusCode}");
-        debugPrint("❌ Body: ${response.body}");
       }
     } catch (e) {
       debugPrint("❌ Error unregister token: $e");

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:speedlab_pelanggan/app/data/models/service_model.dart';
 import 'package:speedlab_pelanggan/app/data/providers/service_provider.dart';
+import 'package:speedlab_pelanggan/app/utils/widget/custom_snackbar.dart';
 
 class ServiceController extends GetxController {
   final ServiceProvider provider;
@@ -24,10 +25,10 @@ class ServiceController extends GetxController {
         final servicesResponse = ServiceResponse.fromJson(response.body);
         services.value = servicesResponse.data;
       } else {
-        Get.snackbar('Error', 'Gagal memuat layanan servis');
+        CustomSnackbar.error('Error', 'Gagal memuat layanan servis');
       }
     } catch (e) {
-      Get.snackbar('Error', 'Gagal memuat layanan servis');
+      CustomSnackbar.error('Error', 'Gagal memuat layanan servis');
     } finally {
       isLoading.value = false;
     }

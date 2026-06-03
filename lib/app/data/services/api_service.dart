@@ -16,6 +16,7 @@ class ApiService extends GetConnect {
     // Request Interceptor - Tambahkan token ke header
     httpClient.addRequestModifier<dynamic>((request) {
       final token = GetStorage().read('token');
+      request.headers['Accept'] = 'application/json';
       if (token != null) {
         request.headers['Authorization'] = 'Bearer $token';
       }
