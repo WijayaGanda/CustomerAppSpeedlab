@@ -13,4 +13,16 @@ class AuthProvider extends ApiService {
   Future<Response> loginWithGoogle(String idToken) {
     return post("api/auth/google", {'token': idToken});
   }
+
+  Future<Response> forgotPassword(Map<String, dynamic> data) {
+    return post('api/auth/forgot-password', data);
+  }
+
+  Future<Response> verifyOtp(Map<String, dynamic> data) {
+    return post('api/auth/verify-otp', data);
+  }
+
+  Future<Response> resetPassword(Map<String, dynamic> data) {
+    return post('api/auth/reset-password', data);
+  }
 }

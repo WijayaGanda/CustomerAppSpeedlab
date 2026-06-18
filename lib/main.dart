@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:speedlab_pelanggan/app/data/services/theme_services.dart';
 import 'firebase_options.dart';
 
 import 'package:get/get.dart';
@@ -51,6 +52,11 @@ class MyApp extends StatelessWidget {
       title: "Speedlab Pelanggan",
       debugShowCheckedModeBanner: false,
 
+      theme: ThemeData.light(), // Tema terang bawaan Flutter
+      darkTheme: ThemeData.dark(), // Tema gelap bawaan Flutter
+      themeMode: ThemeService().theme, // Controller penyimpan status
+      // ...
+
       // Device Preview configuration
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
@@ -60,10 +66,10 @@ class MyApp extends StatelessWidget {
       getPages: AppPages.routes,
 
       // Theme
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        scaffoldBackgroundColor: Colors.white,
-      ),
+      // theme: ThemeData(
+      //   primarySwatch: Colors.green,
+      //   scaffoldBackgroundColor: Colors.white,
+      // ),
     );
   }
 }

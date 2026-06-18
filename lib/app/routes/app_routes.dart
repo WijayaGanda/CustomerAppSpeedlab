@@ -22,6 +22,9 @@ abstract class Routes {
   static const WELCOME_PAGE = _Paths.WELCOME_PAGE;
   static const SPLASH = _Paths.SPLASH;
   static const NOTIFICATION = _Paths.NOTIFICATION;
+  static const EMAIL_PAGE = _Paths.EMAIL_PAGE;
+  static const OTP_PAGE = _Paths.OTP_PAGE;
+  static const CHANGE_PASSWORD = _Paths.CHANGE_PASSWORD;
 }
 
 abstract class _Paths {
@@ -45,4 +48,7 @@ abstract class _Paths {
   static const WELCOME_PAGE = '/welcome-page';
   static const SPLASH = '/splash';
   static const NOTIFICATION = '/notification';
+  static const EMAIL_PAGE = '/email-page';
+  static const OTP_PAGE = '/otp-page';
+  static const CHANGE_PASSWORD = '/change-password';
 }

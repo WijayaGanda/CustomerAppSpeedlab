@@ -4,6 +4,8 @@ import '../modules/add_motor/bindings/add_motor_binding.dart';
 import '../modules/add_motor/views/add_motor_view.dart';
 import '../modules/booking/bindings/booking_binding.dart';
 import '../modules/booking/views/booking_view.dart';
+import '../modules/change_password/bindings/change_password_binding.dart';
+import '../modules/change_password/views/change_password_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/detail_motor/bindings/detail_motor_binding.dart';
@@ -12,6 +14,8 @@ import '../modules/edit_motor/bindings/edit_motor_binding.dart';
 import '../modules/edit_motor/views/edit_motor_view.dart';
 import '../modules/edit_profile/bindings/edit_profile_binding.dart';
 import '../modules/edit_profile/views/edit_profile_view.dart';
+import '../modules/email_page/bindings/email_page_binding.dart';
+import '../modules/email_page/views/email_page_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/klaim_garansi/bindings/klaim_garansi_binding.dart';
@@ -20,6 +24,8 @@ import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/notification/bindings/notification_binding.dart';
 import '../modules/notification/views/notification_view.dart';
+import '../modules/otp_page/bindings/otp_page_binding.dart';
+import '../modules/otp_page/views/otp_page_view.dart';
 import '../modules/payment_webview/bindings/payment_webview_binding.dart';
 import '../modules/payment_webview/views/payment_webview_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
@@ -141,6 +147,21 @@ class AppPages {
       name: _Paths.NOTIFICATION,
       page: () => const NotificationView(),
       binding: NotificationBinding(),
+    ),
+    GetPage(
+      name: _Paths.EMAIL_PAGE,
+      page: () => const EmailPageView(),
+      binding: EmailPageBinding(),
+    ),
+    GetPage(
+      name: _Paths.OTP_PAGE,
+      page: () => const OtpPageView(),
+      binding: OtpPageBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHANGE_PASSWORD,
+      page: () => const ChangePasswordView(),
+      binding: ChangePasswordBinding(),
     ),
   ];
 }
