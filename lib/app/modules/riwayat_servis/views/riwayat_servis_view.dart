@@ -26,6 +26,93 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
     return "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
   }
 
+  void _showPhotoPreview(
+    BuildContext context,
+    String imageUrl,
+    String description,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder:
+          (_) => Dialog(
+            insetPadding: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 8, 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          description.isNotEmpty
+                              ? description
+                              : 'Foto Pekerjaan',
+                          style: GoogleFonts.poppins(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: InteractiveViewer(
+                        minScale: 0.8,
+                        maxScale: 4,
+                        child: Image.network(
+                          imageUrl,
+                          fit: BoxFit.contain,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              color: Colors.grey[200],
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[100],
+                              child: const Center(
+                                child: Icon(
+                                  Icons.broken_image_outlined,
+                                  size: 48,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -280,69 +367,97 @@ class RiwayatServisView extends GetView<RiwayatServisController> {
                   mainAxisSpacing: 8,
                 ),
                 itemBuilder: (context, index) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Stack(
-                      fit: StackFit.expand, // Memaksa stack memenuhi kotak grid
-                      children: [
-                        // 1. GAMBAR (Paling Belakang)
-                        Image.network(
-                          controller
-                                  .serviceHistory
-                                  .first
-                                  .workPhotos?[index]['path'] ??
-                              'https://via.placeholder.com/150?text=No+Image',
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              color: Colors.grey[200],
-                              child: const Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                  final photo =
+                      controller.serviceHistory.first.workPhotos?[index];
+                  final imageUrl =
+                      photo?['path'] ??
+                      'https://via.placeholder.com/150?text=No+Image';
+                  final description = photo?['description'] ?? '-';
+
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        if (imageUrl.isNotEmpty) {
+                          _showPhotoPreview(context, imageUrl, description);
+                        }
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Stack(
+                          fit:
+                              StackFit
+                                  .expand, // Memaksa stack memenuhi kotak grid
+                          children: [
+                            // 1. GAMBAR (Paling Belakang)
+                            Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (
+                                context,
+                                child,
+                                loadingProgress,
+                              ) {
+                                if (loadingProgress == null) return child;
+                                return Container(
+                                  color: Colors.grey[200],
+                                  child: const Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: Colors.grey[100],
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.broken_image_outlined,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+
+                            // 2. DESKRIPSI (Menumpuk di Atas Gambar Bagian Bawah)
+                            Positioned(
+                              bottom: 0, // Tempel ke bawah
+                              left: 0, // Mentok kiri
+                              right: 0, // Mentok kanan
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 6,
+                                ),
+                                // Memberikan background gradasi atau warna gelap transparan
+                                // agar teks putih tetap terbaca walau fotonya terang
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                ),
+                                child: Text(
+                                  // Mengambil deskripsi, jika null tampilkan strip "-"
+                                  description,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize:
+                                        10, // Font kecil menyesuaikan 3 kolom
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines:
+                                      2, // Maksimal 2 baris agar tidak menutupi gambar
+                                  overflow:
+                                      TextOverflow
+                                          .ellipsis, // Jika kepanjangan jadi "..."
                                 ),
                               ),
-                            );
-                          },
+                            ),
+                          ],
                         ),
-
-                        // 2. DESKRIPSI (Menumpuk di Atas Gambar Bagian Bawah)
-                        Positioned(
-                          bottom: 0, // Tempel ke bawah
-                          left: 0, // Mentok kiri
-                          right: 0, // Mentok kanan
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 6,
-                            ),
-                            // Memberikan background gradasi atau warna gelap transparan
-                            // agar teks putih tetap terbaca walau fotonya terang
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.6),
-                            ),
-                            child: Text(
-                              // Mengambil deskripsi, jika null tampilkan strip "-"
-                              controller
-                                      .serviceHistory
-                                      .first
-                                      .workPhotos?[index]['description'] ??
-                                  '-',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 10, // Font kecil menyesuaikan 3 kolom
-                                fontWeight: FontWeight.w500,
-                              ),
-                              textAlign: TextAlign.center,
-                              maxLines:
-                                  2, // Maksimal 2 baris agar tidak menutupi gambar
-                              overflow:
-                                  TextOverflow
-                                      .ellipsis, // Jika kepanjangan jadi "..."
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   );
                 },

@@ -27,4 +27,16 @@ class BookingsProvider extends ApiService {
     final formattedDate = DateFormat('yyyy-MM-dd').format(date);
     return await get('api/bookings/by-date', query: {'date': formattedDate});
   }
+
+  Future<Response> fetchOperatingHours() async {
+    return await get('api/operating-hours');
+  }
+
+  Future<Response> getExceptionByDate() {
+    return get('api/schedule-exceptions');
+  }
+
+  Future<Response> saveExceptionDate(Map<String, dynamic> data) {
+    return post('api/schedule-exceptions/save', data);
+  }
 }

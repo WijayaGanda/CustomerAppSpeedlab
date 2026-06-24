@@ -194,6 +194,11 @@ class HomeView extends GetView<HomeController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  controller.motors.isEmpty
+                      ? buildInfo(
+                        "Tambahkan motor Anda untuk melakukan booking.",
+                      )
+                      : SizedBox.shrink(),
                   // Header Section dengan Gradient
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
@@ -737,97 +742,100 @@ class HomeView extends GetView<HomeController> {
 
 // ... Fungsi tooltip bisa dipertahankan di bawah sini
 
-Widget _buildCustomTooltip({
-  required String title,
-  required String description,
-  bool isLast = false, // Penanda jika ini adalah langkah terakhir
-}) {
-  return Container(
-    width: 280, // Sesuaikan lebar tooltip
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.15),
-          blurRadius: 15,
-          offset: const Offset(0, 5),
-        ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          title,
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-            color: const Color(0xFF2D3142),
+Widget buildInfo(String message) {
+  return Center(
+    child: FittedBox(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: ColorTheme.warning.withValues(alpha: 0.7),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Text(
+            message,
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF2D3142),
+            ),
           ),
         ),
-        const SizedBox(height: 6),
+      ),
+    ),
+  );
+}
+
+Widget _buildDetailRow(String label, String value, [bool? isActive]) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 16),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 130,
+          child: Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[500],
+            ),
+          ),
+        ),
         Text(
-          description,
+          ': ',
           style: GoogleFonts.poppins(
             fontSize: 13,
-            color: Colors.grey[600],
-            height: 1.4,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[500],
           ),
         ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Tombol Skip (Lewati)
-            TextButton(
-              onPressed: () {
-                // Memberhentikan paksa seluruh tutorial
-                ShowcaseView.getNamed('tutorial_home').dismiss();
-              },
-              child: Text(
-                "Lewati",
-                style: GoogleFonts.poppins(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[500],
-                ),
-              ),
-            ),
-
-            // Tombol Next (Lanjut) / Selesai
-            ElevatedButton(
-              onPressed: () {
-                if (isLast) {
-                  ShowcaseView.getNamed('tutorial_home').dismiss();
-                } else {
-                  // Melanjutkan ke target selanjutnya
-                  ShowcaseView.getNamed('tutorial_home').next();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorTheme.primary,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-              ),
-              child: Text(
-                isLast ? "Selesai" : "Lanjut",
-                style: GoogleFonts.poppins(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
+        const SizedBox(width: 8),
+        Expanded(
+          child:
+              isActive != null
+                  ? Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color:
+                            isActive
+                                ? Colors.green.withOpacity(0.1)
+                                : Colors.red.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        value,
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: isActive ? Colors.green[700] : Colors.red[700],
+                        ),
+                      ),
+                    ),
+                  )
+                  : Text(
+                    value,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF2D3142),
+                      height: 1.4,
+                    ),
+                  ),
         ),
       ],
     ),

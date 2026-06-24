@@ -6,6 +6,7 @@ import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_button.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_header.dart';
 import 'package:speedlab_pelanggan/app/utils/widget/custom_textfield.dart';
+import 'package:flutter/services.dart';
 
 import '../controllers/add_motor_controller.dart';
 
@@ -67,6 +68,7 @@ class AddMotorView extends GetView<AddMotorController> {
                     iconLabel: Icons.calendar_today,
                     isObscure: false,
                     hintText: "Contoh: 2020, 2021, 2022",
+                    keyboardType: TextInputType.number,
                   ),
                   CustomTextField(
                     controller: controller.licensePlate,
@@ -75,6 +77,14 @@ class AddMotorView extends GetView<AddMotorController> {
                     iconLabel: Icons.numbers,
                     isObscure: false,
                     hintText: "Contoh: B 1234 AB",
+                    inputFormatters: [
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        return newValue.copyWith(
+                          text: newValue.text.toUpperCase(),
+                          selection: newValue.selection,
+                        );
+                      }),
+                    ],
                   ),
                   CustomTextField(
                     controller: controller.color,
@@ -99,20 +109,6 @@ class AddMotorView extends GetView<AddMotorController> {
                             ),
                   ),
                   SizedBox(height: 12),
-                  Obx(
-                    () =>
-                        controller.isLoading.value
-                            ? CircularProgressIndicator()
-                            : CustomButton(
-                              backgroundColor: Colors.white,
-                              foregroundColor: ColorTheme.secondaryColor,
-                              onPressed: () {
-                                controller.reset();
-                              },
-                              icon: Icons.refresh,
-                              text: "Reset",
-                            ),
-                  ),
                 ],
               ),
             ),

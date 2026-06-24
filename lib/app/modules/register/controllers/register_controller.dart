@@ -64,4 +64,8 @@ class RegisterController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  void moveToLogin() {
+    Get.offAllNamed('/login');
+  }
 }

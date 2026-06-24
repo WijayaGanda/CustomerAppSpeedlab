@@ -555,7 +555,7 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
       case 'Sedang Dikerjakan':
         actions = [
           ActionSheetItem(
-            title: 'Hubungi Teknisi',
+            title: 'Hubungi Admin',
             icon: Icons.phone_rounded,
             onPressed: () => controller.contactTechnician(booking),
           ),
@@ -568,11 +568,6 @@ class RiwayatBookingView extends GetView<RiwayatBookingController> {
         break;
       case 'Selesai':
         actions = [
-          ActionSheetItem(
-            title: 'Konfirmasi Pengambilan',
-            icon: Icons.check_circle_rounded,
-            onPressed: () => controller.confirmPickup(booking),
-          ),
           ActionSheetItem(
             title: 'Download Invoice',
             icon: Icons.download_rounded,

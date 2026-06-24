@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:speedlab_pelanggan/app/utils/theme/color_theme.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -15,6 +16,8 @@ class CustomTextField extends StatelessWidget {
   final String? label;
   final int? maxLines;
   final bool enabled;
+  final TextCapitalization? textCapitalization;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     Key? key,
@@ -30,6 +33,8 @@ class CustomTextField extends StatelessWidget {
     this.label,
     this.maxLines,
     this.enabled = true,
+    this.textCapitalization,
+    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -58,11 +63,22 @@ class CustomTextField extends StatelessWidget {
           ),
           SizedBox(height: 8),
           TextFormField(
+            inputFormatters:
+                inputFormatters ??
+                [
+                  TextInputFormatter.withFunction((oldValue, newValue) {
+                    return newValue.copyWith(
+                      text: newValue.text.toLowerCase(),
+                      selection: newValue.selection,
+                    );
+                  }),
+                ],
             controller: controller,
             obscureText: isObscure,
             keyboardType: keyboardType,
             validator: validator,
             maxLines: maxLines,
+            textCapitalization: textCapitalization ?? TextCapitalization.none,
             enabled: enabled,
             style: GoogleFonts.poppins(fontSize: 15, color: Color(0xFF333333)),
             decoration: InputDecoration(

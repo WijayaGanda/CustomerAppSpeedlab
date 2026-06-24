@@ -52,7 +52,7 @@ class ProfileView extends GetView<ProfileController> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Get.isDarkMode ? Colors.white : Colors.black,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
@@ -173,31 +173,31 @@ class ProfileView extends GetView<ProfileController> {
                       Get.toNamed('/security');
                     },
                   ),
-                  Obx(
-                    () => SwitchListTile(
-                      title: Text(
-                        'dark_mode',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      secondary: Icon(
-                        controller.isDarkMode.value
-                            ? Icons.dark_mode
-                            : Icons.light_mode,
-                        color:
-                            controller.isDarkMode.value
-                                ? Colors.blueAccent
-                                : Colors.orange,
-                      ),
-                      value: controller.isDarkMode.value,
-                      onChanged: (value) => controller.toggleDarkMode(value),
-                      activeColor: Colors.blueAccent,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
 
+                  // Obx(
+                  //   () => SwitchListTile(
+                  //     title: Text(
+                  //       'dark_mode',
+                  //       style: const TextStyle(
+                  //         fontSize: 16,
+                  //         fontWeight: FontWeight.w500,
+                  //       ),
+                  //     ),
+                  //     secondary: Icon(
+                  //       controller.isDarkMode.value
+                  //           ? Icons.dark_mode
+                  //           : Icons.light_mode,
+                  //       color:
+                  //           controller.isDarkMode.value
+                  //               ? Colors.blueAccent
+                  //               : Colors.orange,
+                  //     ),
+                  //     value: controller.isDarkMode.value,
+                  //     onChanged: (value) => controller.toggleDarkMode(value),
+                  //     activeColor: Colors.blueAccent,
+                  //     contentPadding: EdgeInsets.zero,
+                  //   ),
+                  // ),
                   const SizedBox(height: 24),
 
                   // Logout Button

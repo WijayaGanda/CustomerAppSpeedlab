@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:speedlab_pelanggan/app/data/models/date_exception_model.dart';
 import 'package:speedlab_pelanggan/app/data/models/motor_model.dart';
+import 'package:speedlab_pelanggan/app/data/models/operating_hours_model.dart';
 import 'package:speedlab_pelanggan/app/data/models/service_model.dart';
 import 'package:speedlab_pelanggan/app/data/providers/bookings_provider.dart';
 import 'package:speedlab_pelanggan/app/data/providers/service_provider.dart';
@@ -48,6 +50,9 @@ class BookingController extends GetxController {
           ? DateFormat('HH:mm').format(selectedDateTime.value!)
           : '';
 
+  var operatingHoursConfig = <OperatingHourModel>[].obs;
+  var scheduleExceptions = <DateExceptionModel>[].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -60,6 +65,36 @@ class BookingController extends GetxController {
     // selectedDateTime akan di-set saat user memilih tanggal
 
     fetchServices();
+    fetchOperatingHoursConfig();
+    fetchScheduleExceptions();
+  }
+
+  Future<void> fetchOperatingHoursConfig() async {
+    try {
+      final response = await provider.fetchOperatingHours();
+      if (response.isOk && response.body != null) {
+        // 🔥 Melakukan mapping dari JSON list ke Object Model List
+        operatingHoursConfig.value = List<OperatingHourModel>.from(
+          response.body['data'].map((x) => OperatingHourModel.fromJson(x)),
+        );
+      }
+    } catch (e) {
+      debugPrint("Error fetching operating hours config: $e");
+    }
+  }
+
+  Future<void> fetchScheduleExceptions() async {
+    try {
+      // Pastikan Anda mendaftarkan method GET ke /api/schedule-exceptions di provider pelanggan
+      final response = await provider.getExceptionByDate();
+      if (response.isOk && response.body != null) {
+        scheduleExceptions.value = List<DateExceptionModel>.from(
+          response.body['data'].map((x) => DateExceptionModel.fromJson(x)),
+        );
+      }
+    } catch (e) {
+      debugPrint("Error fetching schedule exceptions: $e");
+    }
   }
 
   Future<void> fetchServices() async {
@@ -109,6 +144,10 @@ class BookingController extends GetxController {
     }
 
     selectedAddons[serviceId] = currentAddons;
+  }
+
+  void setSelectedAddon(String serviceId, Addon addon) {
+    selectedAddons[serviceId] = [addon];
   }
 
   Variant? getSelectedVariant(String serviceId) {
@@ -189,6 +228,25 @@ class BookingController extends GetxController {
       return;
     }
 
+    for (final service in selectedService) {
+      final hasVariants = service.variants.isNotEmpty;
+      final hasAddons = service.availableAddons.isNotEmpty;
+
+      if (hasVariants && hasAddons) {
+        final selectedVariant = selectedVariants[service.id];
+        final selectedServiceAddons = selectedAddons[service.id] ?? [];
+
+        if (selectedVariant == null || selectedServiceAddons.isEmpty) {
+          CustomModal.showErrorDialog(
+            title: "Informasi",
+            message:
+                "Silakan pilih varian dan minimal satu addon untuk layanan ${service.name}",
+          );
+          return;
+        }
+      }
+    }
+
     // Validasi tanggal dan waktu booking
     if (selectedDateTime.value == null) {
       CustomModal.showErrorDialog(
@@ -267,10 +325,38 @@ class BookingController extends GetxController {
       initialDate: currentDateTime,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
+      selectableDayPredicate: (DateTime date) {
+        String dateStr = DateFormat('yyyy-MM-dd').format(date);
+
+        // 🛑 LAPIS 1: Cek Pengecualian Tanggal (ScheduleException)
+        for (var exp in scheduleExceptions) {
+          if (exp.date == dateStr) {
+            return exp.isOpen == true;
+          }
+        }
+
+        // 🛑 LAPIS 2: Cek Jadwal Rutin Mingguan (OperatingHour)
+        // Konversi weekday Dart (1=Senin..7=Minggu) ke dayIndex Backend (0=Minggu..6=Sabtu)
+        int backendDayIndex = date.weekday == 7 ? 0 : date.weekday;
+
+        for (var config in operatingHoursConfig) {
+          if (config.dayIndex == backendDayIndex) {
+            // 🔥 TOOL DEBUGGING: Cetak status Senin Anda ke Konsol Log
+            if (date.weekday == 1) {
+              print(
+                "📢 Cek Hari Senin ($dateStr) -> Status isOpen di DB: ${config.isOpen}",
+              );
+            }
+
+            return config.isOpen;
+          }
+        }
+
+        return false; // Default tutup jika data tidak ditemukan
+      },
     );
 
     if (picked != null) {
-      // Set tanggal baru, reset waktu agar user harus pilih ulang
       selectedDateTime.value = DateTime(
         picked.year,
         picked.month,
@@ -278,11 +364,7 @@ class BookingController extends GetxController {
         0,
         0,
       );
-
-      // Reset flag waktu karena tanggal berubah
       isTimeSelected.value = false;
-
-      // Fetch booked times untuk tanggal yang dipilih
       await fetchBookedTimes(picked);
     }
   }
@@ -358,19 +440,82 @@ class BookingController extends GetxController {
   List<DateTime> getAvailableTimeSlots() {
     final currentDateTime = selectedDateTime.value ?? DateTime.now();
     final slots = <DateTime>[];
+    String dateStr = DateFormat('yyyy-MM-dd').format(currentDateTime);
 
-    // Create slots from 8 AM to 3 PM (15:00)
-    for (int hour = 8; hour < 15; hour++) {
-      final slot = DateTime(
-        currentDateTime.year,
-        currentDateTime.month,
-        currentDateTime.day,
-        hour,
-        0,
-      );
-      slots.add(slot);
+    bool isCustomDate = false;
+
+    // ==========================================
+    // 🛑 LAPIS 1: CEK PENGECUALIAN TANGGAL
+    // ==========================================
+    for (var exp in scheduleExceptions) {
+      if (exp.date == dateStr) {
+        isCustomDate = true;
+
+        // Jika statusnya libur khusus, langsung kembalikan slot kosong
+        if (exp.isOpen == false) return slots;
+
+        final timeSlotsConfig = exp.timeSlots as List<dynamic>? ?? [];
+        for (var slotConfig in timeSlotsConfig) {
+          int startHour = int.parse(slotConfig.openTime.split(':')[0]);
+          int endHour = int.parse(slotConfig.closeTime.split(':')[0]);
+
+          for (int hour = startHour; hour < endHour; hour++) {
+            // 🔥 LEWATI JAM ISTIRAHAT (12:00 - 12:59)
+            if (hour == 12) continue;
+
+            slots.add(
+              DateTime(
+                currentDateTime.year,
+                currentDateTime.month,
+                currentDateTime.day,
+                hour,
+                0,
+              ),
+            );
+          }
+        }
+        break; // Hentikan pencarian jika tanggal sudah ketemu
+      }
     }
 
+    // ==========================================
+    // 🛑 LAPIS 2: CEK JADWAL RUTIN (Jika Tidak Ada Pengecualian)
+    // ==========================================
+    if (!isCustomDate) {
+      int backendDayIndex =
+          currentDateTime.weekday == 7 ? 0 : currentDateTime.weekday;
+
+      for (var config in operatingHoursConfig) {
+        if (config.dayIndex == backendDayIndex) {
+          // Jika statusnya libur rutin, langsung kembalikan slot kosong
+          if (!config.isOpen) return slots;
+
+          for (var slotConfig in config.timeSlots) {
+            int startHour = int.parse(slotConfig.openTime.split(':')[0]);
+            int endHour = int.parse(slotConfig.closeTime.split(':')[0]);
+
+            for (int hour = startHour; hour < endHour; hour++) {
+              // 🔥 LEWATI JAM ISTIRAHAT (12:00 - 12:59)
+              if (hour == 12) continue;
+
+              slots.add(
+                DateTime(
+                  currentDateTime.year,
+                  currentDateTime.month,
+                  currentDateTime.day,
+                  hour,
+                  0,
+                ),
+              );
+            }
+          }
+          break; // Hentikan pencarian jadwal rutin
+        }
+      }
+    }
+
+    // Urutkan jam dari pagi ke sore agar rapi
+    slots.sort((a, b) => a.compareTo(b));
     return slots;
   }
 
@@ -431,7 +576,7 @@ class BookingController extends GetxController {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Jam Operasional: 08:00 - 15:00',
+                  'Jam Operasional',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: Colors.grey[600],

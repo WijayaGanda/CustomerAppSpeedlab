@@ -118,6 +118,18 @@ class RegisterView extends GetView<RegisterController> {
                 ],
               ),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Kembali Ke Halaman Login?", style: GoogleFonts.poppins()),
+                TextButton(
+                  onPressed: () {
+                    controller.moveToLogin();
+                  },
+                  child: Text("Masuk", style: GoogleFonts.poppins()),
+                ),
+              ],
+            ),
           ],
         ),
       ),

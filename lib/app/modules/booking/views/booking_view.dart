@@ -353,31 +353,6 @@ class BookingView extends GetView<BookingController> {
                                             );
                                           },
                                         ),
-                                      ChoiceChip(
-                                        label: Text(
-                                          'Tanpa varian',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        selected: selectedVariant == null,
-                                        selectedColor: ColorTheme.primary,
-                                        backgroundColor: Colors.grey[100],
-                                        labelStyle: GoogleFonts.poppins(
-                                          color:
-                                              selectedVariant == null
-                                                  ? Colors.white
-                                                  : Colors.black87,
-                                          fontSize: 11,
-                                        ),
-                                        onSelected: (_) {
-                                          controller.setSelectedVariant(
-                                            service.id,
-                                            null,
-                                          );
-                                        },
-                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 12),
@@ -408,25 +383,27 @@ class BookingView extends GetView<BookingController> {
                                         )
                                           Column(
                                             children: [
-                                              CheckboxListTile(
+                                              RadioListTile(
                                                 contentPadding:
                                                     const EdgeInsets.symmetric(
                                                       horizontal: 12,
                                                       vertical: 2,
                                                     ),
                                                 dense: true,
-                                                value: selectedAddons.any(
-                                                  (addon) =>
-                                                      addon.id ==
-                                                      service
-                                                          .availableAddons[i]
-                                                          .id,
-                                                ),
+                                                value:
+                                                    service
+                                                        .availableAddons[i]
+                                                        .id,
+                                                groupValue:
+                                                    selectedAddons.isEmpty
+                                                        ? null
+                                                        : selectedAddons
+                                                            .first
+                                                            .id,
                                                 onChanged: (value) {
-                                                  controller.toggleAddon(
+                                                  controller.setSelectedAddon(
                                                     service.id,
                                                     service.availableAddons[i],
-                                                    value ?? false,
                                                   );
                                                 },
                                                 title: Text(
